@@ -24,6 +24,8 @@
   --color-border: var(--border);
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
+  
+  --breakpoint-lg: 875px;
 }
 
 /*

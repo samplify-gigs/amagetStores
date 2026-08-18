@@ -1,12 +1,12 @@
 "use client";
 
-import { UserIcon } from "@/components/Navbar/UserIcon";
+import { UserIcon } from "@/components-utils/Navbar/UserIcon";
 import { IoCartOutline } from "react-icons/io5";
 import Link from "next/link";
-import { NavHamburger } from "@/components/Navbar/NavHamburger";
-import { AmagetLogo } from "@/components/Navbar/amagetLogo";
+import { NavHamburger } from "@/components-utils/Navbar/NavHamburger";
+import { AmagetLogo } from "@/components-utils/Navbar/amagetLogo";
 import { CiSearch } from "react-icons/ci";
-import { NavSearch } from "@/components/Navbar/Navseach";
+import { NavSearch } from "@/components-utils/Navbar/Navseach";
 import { IoIosCall } from "react-icons/io";
 import { MdOutlineEmail } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
@@ -16,7 +16,7 @@ export function Navbar() {
   return (
     <nav className="w-full">
       {/** top bar for lg */}
-      <div className=" hidden lg:flex gap-4 w-full bg-white border-b border-gray-200 shadow-lg justify-center text-gray-600 p-2 text-xs items-center">
+      <div className=" hidden lg:flex gap-4 w-full bg-secondary border-b border-gray-200 shadow-lg justify-center text-gray-600 p-2 text-xs items-center">
         <div className="flex gap-4 items-center">
           <div className="flex gap-1 items-center ml-3">
             <IoIosCall size={12} className="text-[#fc0056] ml-8" />
@@ -56,7 +56,7 @@ export function Navbar() {
               href="/cart"
               className="relative flex h-10 w-10 items-center justify-center rounded-lg hover:bg-white/15 active:bg-white/25 transition-colors"
             >
-              <UserIcon className="h-5 w-5 cursor-pointer" />
+              <UserIcon className="h-5 w-5 cursor-pointer text-secondary" />
             </Link>
 
             {/* Cart */}
@@ -64,7 +64,7 @@ export function Navbar() {
               href="/cart"
               className="relative flex h-10 w-10 items-center justify-center rounded-lg hover:bg-white/15 active:bg-white/25 transition-colors"
             >
-              <IoCartOutline size={22} className="cursor-pointer" />
+              <IoCartOutline size={22} className="cursor-pointer text-secondary" />
 
               <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
                 4
@@ -84,9 +84,9 @@ export function Navbar() {
             />
           </div>
         </div>
-
+        
         {/** tablet layout */}
-        <div className="hidden sm:flex lg:hidden items-center gap-4 px-6 py-3">
+        <div className="hidden sm:max-lg:flex lg:hidden items-center gap-4 px-6 py-3">
           <NavHamburger size={21} />
           <AmagetLogo
             width={110}

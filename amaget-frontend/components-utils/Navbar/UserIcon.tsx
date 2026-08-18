@@ -7,7 +7,7 @@ type Userprops = {
 
 export function UserIcon({
   size = 18,
-  className = "p-2 rounded-lg hover:bg-white/15 active:bg-white/25 transition-colors",
+  className = "p-2 rounded-lg hover:bg-white/15 active:bg-white/25 transition-colors text-secondary",
 }: Userprops) {
   return (
     <>

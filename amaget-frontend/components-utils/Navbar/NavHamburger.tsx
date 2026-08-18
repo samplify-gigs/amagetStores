@@ -13,7 +13,7 @@ export function NavHamburger({
 }: NavHamburgerProps) {
   return (
     <button
-      className="p-1.5 rounded-lg hover:bg-white/15 active:bg-white/25 transition-colors"
+      className="p-1.5 rounded-lg hover:bg-white/15 active:bg-white/25 transition-colors text-secondary"
       onClick={() => setOpenAction(!Open)}
     >
       <GiHamburgerMenu size={size} />
