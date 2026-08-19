@@ -6,7 +6,7 @@ import {
   CarouselNext,
   CarouselItem,
   CarouselPrevious,
-} from "../carousels-utils/carousel";
+} from "../../components-utils/carousels-utils/carousel";
 import Link from "next/link";
 import React from "react";
 import Autoplay from "embla-carousel-autoplay";
