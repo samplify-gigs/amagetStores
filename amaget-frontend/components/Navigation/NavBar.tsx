@@ -10,11 +10,14 @@ import { NavSearch } from "@/components-utils/Navbar/Navseach";
 import { IoIosCall } from "react-icons/io";
 import { MdOutlineEmail } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
+import { useState } from "react";
+import { Overlay, SideBar } from "../Sidebar/sidebar";
 
 export function Navbar() {
+  const [open, setOpenAction] = useState(false);
   const input = "";
   return (
-    <nav className="w-full">
+    <nav className="w-full fixed z-50">
       {/** top bar for lg */}
       <div className=" hidden lg:flex gap-4 w-full bg-secondary border-b border-gray-200 shadow-lg justify-center text-gray-600 p-2 text-xs items-center">
         <div className="flex gap-4 items-center">
@@ -45,7 +48,7 @@ export function Navbar() {
         <div className=" flex justify-between items-center px-4 pt-3 pb-2 sm:hidden md:hidden lg:hidden">
           {/** top left side for mobile */}
           <div className="flex items-center gap-1 justify-center">
-            <NavHamburger />
+            <NavHamburger open={open} setOpenAction={setOpenAction} />
             <AmagetLogo />
           </div>
 
@@ -64,7 +67,10 @@ export function Navbar() {
               href="/cart"
               className="relative flex h-10 w-10 items-center justify-center rounded-lg hover:bg-white/15 active:bg-white/25 transition-colors"
             >
-              <IoCartOutline size={22} className="cursor-pointer text-secondary" />
+              <IoCartOutline
+                size={22}
+                className="cursor-pointer text-secondary"
+              />
 
               <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
                 4
@@ -84,10 +90,10 @@ export function Navbar() {
             />
           </div>
         </div>
-        
+
         {/** tablet layout */}
         <div className="hidden sm:max-lg:flex lg:hidden items-center gap-4 px-6 py-3">
-          <NavHamburger size={21} />
+          <NavHamburger size={21} open={open} setOpenAction={setOpenAction} />
           <AmagetLogo
             width={110}
             height={36}
@@ -170,6 +176,15 @@ export function Navbar() {
           </div>
         </div>
       </div>
+
+      {
+        open && (
+          <>
+          <Overlay open={open} setOpenAction={setOpenAction}/>
+          <SideBar open={open} setOpenAction={setOpenAction}/>
+          </>
+        )
+      }
     </nav>
   );
 }

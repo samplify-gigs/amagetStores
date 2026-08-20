@@ -10,7 +10,7 @@ import Link from "next/link";
 import { products } from "@/db/mock";
 
 
-export type HotItems = {
+ type HotItems = {
   id: number;
   url: string;
   name: string;

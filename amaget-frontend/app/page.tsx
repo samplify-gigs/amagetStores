@@ -4,6 +4,7 @@ import BrowseCategorySection from "@/components/Browse-category-carousel/browse-
 import UpgradePc from "@/components/upgrade-pc/upgrade-pc";
 import { Lifestyle } from "@/components/Lifestyle-carousels/Lifestyle";
 import { BNPL } from "@/components/BNPL-carousel/bnpl";
+import { SideBar } from "@/components/Sidebar/sidebar";
 
 
 export default function Home() {

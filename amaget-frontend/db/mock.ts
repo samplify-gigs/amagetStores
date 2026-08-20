@@ -1,11 +1,10 @@
-import { HotItems } from "@/components/Hot-sales-carousel/hot-sales";
 import { TfiMobile } from "react-icons/tfi";
-import { IoIosLaptop } from "react-icons/io";
+import { IoIosDesktop, IoIosLaptop } from "react-icons/io";
 import { IoMdDesktop } from "react-icons/io";
 import { LuPrinter, LuCctv } from "react-icons/lu";
-import { FiHeadphones } from "react-icons/fi";
+import { FiHeadphones, FiHome, FiPackage, FiUser } from "react-icons/fi";
 import { PiTelevisionSimpleBold } from "react-icons/pi";
-import { IoGameController } from "react-icons/io5";
+import { IoGameController, IoGameControllerOutline } from "react-icons/io5";
 import {
   MdOutlineBlender,
   MdAddToHomeScreen,
@@ -28,6 +27,14 @@ export type upgrade = {
   url: string;
   slug: string;
   category: string;
+};
+
+export type NavBarprops = {
+  open: boolean;
+  setOpenAction: React.Dispatch<React.SetStateAction<boolean>>;
+  query?: string;
+  products?: Products[];
+  session?: Session | null;
 };
 
 export const NAV_LINKS = [
@@ -130,7 +137,7 @@ export const BnplItems = [
   },
 ];
 
-export const products: HotItems[] = [
+export const products = [
   {
     id: 4555,
     url: "/Lifestyle/airpods pro.webp",
@@ -311,4 +318,48 @@ export const LifestyleItems = [
     alt: "Samsung Fast Charger",
     price: "14500",
   },
+];
+
+export const CategoriesForSidebar = [
+  { icon: TfiMobile, label: "Phones & Tablet", href: "/phones-tablets" },
+  { icon: IoIosLaptop, label: "Laptops", href: "/laptops" },
+  { icon: IoIosDesktop, label: "Desktops", href: "/printers" },
+  { icon: LuPrinter, label: "Printers", href: "/printers" },
+  {
+    icon: IoMdDesktop,
+    label: "Desktops & Monitors",
+    href: "/desktop-monitors",
+  },
+  { icon: FiHeadphones, label: "Accessories", href: "/accessories" },
+  {
+    icon: PiTelevisionSimpleBold,
+    label: "Electronics",
+    href: "/electronics",
+  },
+  { icon: IoGameControllerOutline, label: "Gaming", href: "/gaming" },
+  {
+    icon: MdOutlineBlender,
+    label: "Home-appliances",
+    href: "/home-appliances",
+  },
+  { icon: MdAddToHomeScreen, label: "Phone Parts", href: "/phone-parts" },
+  {
+    icon: MdOutlineSolarPower,
+    label: "Power & Backup",
+    href: "/power-backup",
+  },
+  { icon: FaCamera, label: "Camera & Lenses", href: "/camera-lenses" },
+  { icon: LuCctv, label: "CCTV & Security", href: "/cctv-security" },
+  { icon: FaServer, label: "Servers", href: "/servers" },
+  {
+    icon: MdSignalWifiStatusbar1Bar,
+    label: "Internet & Networking",
+    href: "/internetandnetworking",
+  },
+];
+
+export const NavLinksForSidebar = [
+  { icon: FiHome, label: "amaget Home", href: "/" },
+  { icon: FiUser, label: "My Account", href: "/account" },
+  { icon: FiPackage, label: "My Orders", href: "/orders" },
 ];

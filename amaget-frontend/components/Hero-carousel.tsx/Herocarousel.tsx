@@ -104,7 +104,7 @@ export function HeroCarousel() {
     [],
   );
   return (
-    <div className="w-full mt-2">
+    <div className="w-full mt-29 lg:mt-33">
       {/** mobile and tabs layout */}
       <Carousel
         plugins={[mobilePlugin]}
@@ -148,9 +148,9 @@ export function HeroCarousel() {
       {/** for lg */}
       <div className="hidden lg:flex justify-center gap-1 h-[420px] xl:h-[460px] max-w-[1400px] w-full mx-auto">
         {/* ── LEFT: Categories panel ─────────────────────────────── */}
-        <aside className="w-[180px] xl:w-[200px] shrink-0 bg-white flex flex-col overflow-hidden  ">
+        <aside className="w-[180px] xl:w-[200px] shrink-0 bg-white flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="px-4 py-3 bg-[#fc0056] border-b border-white/5">
+          <div className="px-4 py-3 bg-primary border-b border-white/5">
             <span className="text-[11px] font-bold tracking-[0.15em] uppercase text-white">
               All Categories
             </span>
