@@ -13,6 +13,13 @@ import {
   MdSignalWifiStatusbar1Bar,
 } from "react-icons/md";
 import { FaCamera, FaServer } from "react-icons/fa";
+import {
+  FaInstagram,
+  FaXTwitter,
+  FaFacebook,
+  FaTiktok,
+  FaYoutube,
+} from "react-icons/fa6";
 
 export type upgrade = {
   id: number;
@@ -22,6 +29,22 @@ export type upgrade = {
   slug: string;
   category: string;
 };
+
+export const NAV_LINKS = [
+  { label: "About Us", href: "#" },
+  { label: "Customer Support", href: "#" },
+  { label: "Visit Your Account", href: "#" },
+  { label: "Terms & Conditions", href: "#" },
+  { label: "Privacy Policy", href: "#" },
+];
+
+export const SOCIAL_LINKS = [
+  { icon: FaInstagram, label: "Instagram", href: "#" },
+  { icon: FaXTwitter, label: "X / Twitter", href: "#" },
+  { icon: FaFacebook, label: "Facebook", href: "#" },
+  { icon: FaTiktok, label: "TikTok", href: "#" },
+  { icon: FaYoutube, label: "YouTube", href: "#" },
+];
 
 export const BnplItems = [
   {

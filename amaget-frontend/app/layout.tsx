@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { inter, lusitana } from "@/fonts";
 import { Navbar } from "@/components/Navigation/NavBar";
 import "./globals.css";
+import {  FooterSec } from "@/components/Footer/footer";
 
 export const metadata: Metadata = {
   title: "amaget stores",
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <Navbar />
         {children}
+        <FooterSec/>
       </body>
     </html>
   );
