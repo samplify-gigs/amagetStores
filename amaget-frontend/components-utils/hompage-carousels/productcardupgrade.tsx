@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { PriceFormatter } from "@/Helper-functions/price";
 
-export function ProductCard({
+export function ProductCardForUpgrade({
   src,
   alt,
   price,
@@ -11,8 +11,8 @@ export function ProductCard({
   price: number;
 }) {
   return (
-    <div className="group flex flex-col bg-secondary rounded-xl overflow-hidden border border-gray-100 hover:border-[#7EB8C9]/40 hover:shadow-lg hover:shadow-[#7EB8C9]/10 transition-all duration-250 cursor-pointer">
-      {/* Image container */}
+    <div className="group flex flex-col bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-[#7EB8C9]/40 hover:shadow-lg hover:shadow-[#7EB8C9]/10 transition-all duration-250 cursor-pointer">
+      {/* Image container — fixed aspect ratio */}
       <div className="relative w-full aspect-[4/5] bg-gray-50 overflow-hidden">
         <Image
           src={src}
@@ -22,10 +22,6 @@ export function ProductCard({
           quality={88}
           className="object-contain p-3 group-hover:scale-105 transition-transform duration-300 ease-out"
         />
-        {/* Hot badge */}
-        <span className="absolute top-2 left-2 bg-[#fc0056] text-white text-[9px] font-bold tracking-widest uppercase px-2 py-0.5 rounded-full">
-          Hot
-        </span>
       </div>
 
       {/* Info */}
