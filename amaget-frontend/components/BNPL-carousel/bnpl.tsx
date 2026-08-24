@@ -1,8 +1,24 @@
 import { ProductCardLifestyle } from "@/components-utils/hompage-carousels/productcardLifestyle";
 import Image from "next/image";
-import { BnplItems } from "@/db/mock";
+import { LifestyleItems } from "@/db/mock";
+import { LifestyleGridSkeleton } from "@/components-utils/hompage-carousels/Lifestylegridskeleton";
 
-export function BNPL() {
+interface CarouselItems {
+  id: string;
+  name: string;
+  category_id: string;
+  legacy_product_id: string;
+  price: string;
+  url: string;
+  categ_name: string;
+}
+
+interface HomepageData {
+  bnpl: CarouselItems[];
+  isloading: boolean;
+}
+
+export function BNPL({ bnpl, isloading }: HomepageData) {
   return (
     <section className="w-full max-w-[1400px] mx-auto px-1 sm:max-sm:px-4 lg:px-0 py-6">
       {/*header */}
@@ -24,24 +40,32 @@ export function BNPL() {
         </div>
       </div>
 
-      <div className="border border-gray-200 border-t-0">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-8 lg:gap-y-0.5">
-          {BnplItems.map(({ src, alt, price }) => (
-            <div
-              key={alt}
-              className="
+      {isloading ? (
+        <LifestyleGridSkeleton count={LifestyleItems?.length ?? 16} />
+      ) : (
+        <div className="border border-gray-200 border-t-0">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-8 lg:gap-y-0.5">
+            {bnpl.map((items) => (
+              <div
+                key={items.id}
+                className="
                 border-r border-gray-200 last:border-r
                 border-b border-gray-200
                 lg:[&:nth-child(n)]:border-b-1
               "
-            >
-              <div className="h-full">
-                <ProductCardLifestyle src={src} alt={alt} price={price} />
+              >
+                <div className="h-full">
+                  <ProductCardLifestyle
+                    src={items.url}
+                    alt={items.name}
+                    price={items.price}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }

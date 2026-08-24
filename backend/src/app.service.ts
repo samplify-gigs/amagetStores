@@ -32,33 +32,29 @@ export class AppService implements OnModuleInit {
 
   async fetchHotSales() {
     const result = await this.db.query<HotsalesItem>(
-      'select id,name,price,category_id from new_products limit 8 ',
+      'select new_products.id,new_products.price,new_products.name,new_products.legacy_product_id,new_products.category_id,new_categories.slug as categ_name, url from new_products LEFT JOIN new_categories on new_products.category_id = new_categories.id left join lateral ( select url from new_images where product_id = new_products.id limit 1) on true limit 8',
     );
-
     return result.rows;
   }
 
   async fetchUpgradePc() {
     const result = await this.db.query<HotsalesItem>(
-      'select id, name, category_id, price from new_products limit 8',
+      'select new_products.id,new_products.price,new_products.name,new_products.legacy_product_id,new_products.category_id,new_categories.slug as categ_name, url from new_products LEFT JOIN new_categories on new_products.category_id = new_categories.id left join lateral ( select url from new_images where product_id = new_products.id limit 1) on true limit 8',
     );
-
     return result.rows;
   }
 
   async fetchBNPL() {
     const result = await this.db.query<HotsalesItem>(
-      'select id, name, category_id, price from new_products limit 8',
+      'select new_products.id,new_products.price,new_products.name,new_products.legacy_product_id,new_products.category_id,new_categories.slug as categ_name, url from new_products LEFT JOIN new_categories on new_products.category_id = new_categories.id left join lateral ( select url from new_images where product_id = new_products.id limit 1) on true limit 8',
     );
-
     return result.rows;
   }
 
   async fetchLifestyle() {
-    const result = await this.db.query<HotsalesItem>(
-      'select id, name, category_id, price, url from new_products',
+   const result = await this.db.query<HotsalesItem>(
+      'select new_products.id,new_products.price,new_products.name,new_products.legacy_product_id,new_products.category_id,new_categories.slug as categ_name, url from new_products LEFT JOIN new_categories on new_products.category_id = new_categories.id left join lateral ( select url from new_images where product_id = new_products.id limit 1) on true limit 8',
     );
-
     return result.rows;
   }
 
@@ -78,7 +74,7 @@ export class AppService implements OnModuleInit {
         Lifestyle: Lifestyle,
       };
     } catch (err) {
-      console.error('this fetch home errors:', err);
+      console.error('this fetch home carousels errors:', err);
       throw new InternalServerErrorException('could not connect to server');
     }
   }

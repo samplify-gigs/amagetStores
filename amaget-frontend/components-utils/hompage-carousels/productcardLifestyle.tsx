@@ -1,6 +1,8 @@
 import { PriceFormatter } from "@/Helper-functions/price";
-import Image from "next/image";
+
 import Link from "next/link";
+import { CldImage } from "next-cloudinary";
+
 
 
 export function ProductCardLifestyle({
@@ -23,7 +25,7 @@ export function ProductCardLifestyle({
     >
       {/* Image */}
       <div className="relative w-full aspect-square bg-secondary overflow-hidden">
-        <Image
+        <CldImage
           src={src}
           alt={alt}
           fill

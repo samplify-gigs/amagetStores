@@ -1,5 +1,6 @@
-import Image from "next/image";
+
 import { PriceFormatter } from "@/Helper-functions/price";
+import { CldImage } from "next-cloudinary";
 
 export function ProductCardForUpgrade({
   src,
@@ -8,13 +9,13 @@ export function ProductCardForUpgrade({
 }: {
   src: string;
   alt: string;
-  price: number;
+  price: string;
 }) {
   return (
     <div className="group flex flex-col bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-[#7EB8C9]/40 hover:shadow-lg hover:shadow-[#7EB8C9]/10 transition-all duration-250 cursor-pointer">
       {/* Image container — fixed aspect ratio */}
       <div className="relative w-full aspect-[4/5] bg-gray-50 overflow-hidden">
-        <Image
+        <CldImage
           src={src}
           alt={alt}
           fill
