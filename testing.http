@@ -1,1 +1,6 @@
-http://localhost:8080
+POST http://localhost:8080/category/pagination
+ Content-Type: application/json
+
+{
+  "offset": 10
+}

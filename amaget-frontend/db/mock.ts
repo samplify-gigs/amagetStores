@@ -11,7 +11,7 @@ import {
   MdOutlineSolarPower,
   MdSignalWifiStatusbar1Bar,
 } from "react-icons/md";
-import { FaCamera, FaServer } from "react-icons/fa";
+import { FaCamera, FaMicrosoft, FaRegKeyboard, FaServer } from "react-icons/fa";
 import {
   FaInstagram,
   FaXTwitter,
@@ -320,41 +320,76 @@ export const LifestyleItems = [
   },
 ];
 
+export const allowedCategories = [
+  "phones-tablets",
+  "laptops",
+  "desktop",
+  "monitors",
+  "printers-scanners-copiers",
+  "accessories-lifestyle",
+  "servers",
+  "gaming",
+  "phone-parts",
+  "computer-accessories",
+  "software",
+  "power-backup",
+  "electronics",
+  "cctv-security",
+  "camera-lenses",
+  "home-appliances",
+  "internet-and-networking",
+];
+
 export const CategoriesForSidebar = [
-  { icon: TfiMobile, label: "Phones & Tablet", href: "/phones-tablets" },
+  { icon: TfiMobile, label: "Phones and Tablet", href: "/phones-tablets" },
   { icon: IoIosLaptop, label: "Laptops", href: "/laptops" },
-  { icon: IoIosDesktop, label: "Desktops", href: "/printers" },
-  { icon: LuPrinter, label: "Printers", href: "/printers" },
+  { icon: IoIosDesktop, label: "Desktops", href: "/desktop" },
   {
     icon: IoMdDesktop,
-    label: "Desktops & Monitors",
-    href: "/desktop-monitors",
+    label: "Monitors",
+    href: "/monitors",
   },
-  { icon: FiHeadphones, label: "Accessories", href: "/accessories" },
   {
-    icon: PiTelevisionSimpleBold,
-    label: "Electronics",
-    href: "/electronics",
+    icon: LuPrinter,
+    label: "Printers, Scanners, Copiers",
+    href: "/printers-scanners-copiers",
   },
+  {
+    icon: FiHeadphones,
+    label: "Accessories and Lifestyle",
+    href: "/accessories-lifestyle",
+  },
+  { icon: FaServer, label: "Servers", href: "/servers" },
   { icon: IoGameControllerOutline, label: "Gaming", href: "/gaming" },
-  {
-    icon: MdOutlineBlender,
-    label: "Home-appliances",
-    href: "/home-appliances",
-  },
   { icon: MdAddToHomeScreen, label: "Phone Parts", href: "/phone-parts" },
+  {
+    icon: FaRegKeyboard,
+    label: "Computer Accessories",
+    href: "/computer-accessories",
+  },
+  { icon: FaMicrosoft, label: "Software", href: "/software" },
   {
     icon: MdOutlineSolarPower,
     label: "Power & Backup",
     href: "/power-backup",
   },
-  { icon: FaCamera, label: "Camera & Lenses", href: "/camera-lenses" },
-  { icon: LuCctv, label: "CCTV & Security", href: "/cctv-security" },
-  { icon: FaServer, label: "Servers", href: "/servers" },
+  {
+    icon: PiTelevisionSimpleBold,
+    label: "Electronics",
+    href: "/electronics",
+  },
+  { icon: LuCctv, label: "CCTV and Security", href: "/cctv-security" },
+  { icon: FaCamera, label: "Camera and Lenses", href: "/camera-lenses" },
   {
     icon: MdSignalWifiStatusbar1Bar,
-    label: "Internet & Networking",
+    label: "Internet and Networking",
     href: "/internetandnetworking",
+  },
+
+  {
+    icon: MdOutlineBlender,
+    label: "Home-appliances",
+    href: "/home-appliances",
   },
 ];
 
@@ -363,3 +398,40 @@ export const NavLinksForSidebar = [
   { icon: FiUser, label: "My Account", href: "/account" },
   { icon: FiPackage, label: "My Orders", href: "/orders" },
 ];
+
+
+
+
+
+export const SIDEBAR_CATEGORIES = [
+  { name: "Shirts", active: true },
+  { name: "T-Shirts" },
+  { name: "Trousers" },
+  { name: "Jackets" },
+  { name: "Footwear" },
+  { name: "Accessories" },
+];
+
+export const TRENDING = ["Linen shirts", "Slim fit", "Under ₦15,000", "New arrivals"];
+ 
+export const FILTERS = {
+  Price: ["Under ₦10,000", "₦10,000 – ₦20,000", "₦20,000 – ₦35,000", "Above ₦35,000"],
+  Brand: ["Amaget Essentials", "Ferro", "Northline", "Coast & Co."],
+  
+};
+ 
+export const COLORS = ["#1c2b4a", "#3a5f3a", "#ffffff", "#111111", "#8a6d3b", "#c0392b"];
+ 
+export const CATPRODUCTS = [
+  { id: 1, name: "Sky Blue Formal Shirt", fit: "Slim Fit", material: "Cotton", price: 49.99, was: 69.99, rating: 4.6, colors: ["#7ea8c9", "#1c2b4a", "#c9c9c9"], extra: 2, img: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&q=80" },
+  { id: 2, name: "Olive Green Shirt", fit: "Slim Fit", material: "Cotton", price: 44.99, was: 64.99, rating: 4.5, colors: ["#3a5f3a", "#c9c9c9"], extra: 3, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&q=80" },
+  { id: 3, name: "White Printed Shirt", fit: "Regular Fit", material: "Cotton", price: 39.99, was: 54.99, rating: 4.4, colors: ["#ffffff", "#1c2b4a"], extra: 0, img: "https://images.unsplash.com/photo-1620012253295-c15cc3e65df4?w=500&q=80" },
+  { id: 4, name: "Navy Check Shirt", fit: "Slim Fit", material: "Cotton", price: 54.99, was: 79.99, rating: 4.7, colors: ["#1c2b4a", "#111111"], extra: 1, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&q=80" },
+  { id: 5, name: "Charcoal Linen Shirt", fit: "Relaxed Fit", material: "Linen", price: 59.99, was: 0, rating: 4.3, colors: ["#3a3a3a"], extra: 0, img: "https://images.unsplash.com/photo-1620327438706-fd979e39c1a9?w=500&q=80" },
+  { id: 6, name: "Mustard Casual Shirt", fit: "Regular Fit", material: "Cotton", price: 34.99, was: 44.99, rating: 4.2, colors: ["#c9a24b", "#111111"], extra: 2, img: "https://images.unsplash.com/photo-1618453292459-53696dd3a5ff?w=500&q=80" },
+  { id: 7, name: "Denim Overshirt", fit: "Relaxed Fit", material: "Denim", price: 64.99, was: 84.99, rating: 4.8, colors: ["#3b5a7a"], extra: 0, img: "https://images.unsplash.com/photo-1589992896736-59a6f89e5f52?w=500&q=80" },
+  { id: 8, name: "Burgundy Formal Shirt", fit: "Slim Fit", material: "Cotton", price: 47.99, was: 0, rating: 4.1, colors: ["#7a2020", "#1c2b4a"], extra: 1, img: "https://images.unsplash.com/photo-1626497764746-6dc36546b388?w=500&q=80" },
+];
+ 
+export const CATBRAND = "#fc0056"; 
+

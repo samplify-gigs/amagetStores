@@ -22,7 +22,7 @@ export function FooterSec() {
       </button>
 
       {/* Main footer body */}
-      <div className="max-w-5xl mx-auto px-6 pt-10 pb-6">
+      <div className="max-w-5xl mx-auto px-6 pt-10 pb-6 ">
         {/* Nav links — stacked on mobile, row on md+ */}
         <div className="flex flex-col items-center gap-3 md:flex-row md:justify-center md:gap-10 mb-8 ">
           {NAV_LINKS.map(({ label, href }) => (

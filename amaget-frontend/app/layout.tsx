@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { inter, lusitana } from "@/fonts";
 import { Navbar } from "@/components/Navigation/NavBar";
 import "./globals.css";
-import {  FooterSec } from "@/components/Footer/footer";
+import { FooterSec } from "@/components/Footer/footer";
 import { NavsideOv } from "@/components/Navigation/NavsideOv";
 
 export const metadata: Metadata = {
@@ -17,9 +17,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.className} ${lusitana.className} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar/>
-        {children}
-        <FooterSec/>
+        <Navbar />
+        <main className="flex-1">{children}</main> 
+        <FooterSec />
       </body>
     </html>
   );
