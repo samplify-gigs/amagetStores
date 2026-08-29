@@ -12,7 +12,7 @@ export function Breadcrumbs({ category }: CategoryProps) {
       aria-label="Breadcrumb"
       className="text-[12px] text-gray-400 flex items-center gap-1"
     >
-      <Link href="#" className="hover:text-gray-600">
+      <Link href="/" className="hover:text-gray-600">
         Home
       </Link>
       <ChevronRight size={12} />

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Breadcrumbs } from "@/components-utils/category-card/Breadcrumbs";
 import { EmptyState } from "@/components-utils/category-card/emptystate";
 import { FilterGroup } from "@/components-utils/category-card/filter-group";
@@ -12,8 +12,9 @@ import {
   TRENDING,
   CategoriesForSidebar,
 } from "@/db/mock";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useParams } from "next/navigation";
+import { ChevronRight } from "lucide-react";
+import { useParams, useSearchParams } from "next/navigation";
+import { CategPagination } from "@/components-utils/Paginatiom/Categ-Pagination";
 
 type CategProdProps = {
   id: string;
@@ -29,14 +30,19 @@ export default function CategoryPage() {
   const [categProducts, setCategProducts] = useState<CategProdProps[] | null>(
     null,
   );
+
   const resolveParams = useParams<{ category: string }>();
   const { category } = resolveParams;
-
   const activeFilterCount = Object.values(selected).flat().length;
+  const searchParams = useSearchParams();
 
   const pageSize = 20;
-  const currentPage = 1;
+  const currentPage = Math.max(1, Number(searchParams.get("page")) || 1);
   const offset = (currentPage - 1) * pageSize;
+  const firstProduct = categProducts?.[0];
+  const totalCount = firstProduct?.total_count ?? 0;
+  const numTotalCount = Number(totalCount);
+  const totalPage = Math.ceil(numTotalCount / pageSize);
   const urlHome = process.env.NEXT_PUBLIC_BASEURL;
 
   useEffect(() => {
@@ -61,7 +67,7 @@ export default function CategoryPage() {
     }
 
     fetchCategproducts();
-  }, []);
+  }, [offset, urlHome]);
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans mt-29">
@@ -173,34 +179,7 @@ export default function CategoryPage() {
 
           {/* Pagination  */}
           {categProducts && categProducts.length > 0 && (
-            <div className="flex items-center justify-center gap-1.5 sm:gap-2 py-8">
-              <button
-                className="w-9 h-9 flex items-center justify-center border border-gray-200 text-gray-300 rounded-lg"
-                disabled
-              >
-                <ChevronLeft size={15} />
-              </button>
-              {[1, 2, 3].map((p) => (
-                <button
-                  key={p}
-                  className="w-9 h-9 text-[13px] font-medium rounded-lg border"
-                  style={
-                    p === 1
-                      ? {
-                          backgroundColor: BRAND,
-                          borderColor: BRAND,
-                          color: "white",
-                        }
-                      : { borderColor: "#e5e7eb", color: "#4b5563" }
-                  }
-                >
-                  {p}
-                </button>
-              ))}
-              <button className="w-9 h-9 flex items-center justify-center border border-gray-200 text-gray-500 rounded-lg hover:border-[#fc0056] hover:text-[#fc0056]">
-                <ChevronRight size={15} />
-              </button>
-            </div>
+            <CategPagination currentPage={currentPage} totalPage={totalPage} />
           )}
         </main>
       </div>

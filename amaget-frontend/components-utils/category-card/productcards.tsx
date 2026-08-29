@@ -30,7 +30,7 @@ export function ProductCard({ p }: itemProps) {
           alt={p.name}
           fill
           loading="lazy"
-          quality={88}
+          quality={90}
           sizes="(max-width: 640px) 42vw, (max-width: 1024px) 28vw, 200px"
           className="object-contain group-hover:scale-105 transition-transform duration-300 ease-out"
         />
