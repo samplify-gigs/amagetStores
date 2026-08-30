@@ -10,12 +10,50 @@ import { NavSearch } from "@/components-utils/Navbar/Navseach";
 import { IoIosCall } from "react-icons/io";
 import { MdOutlineEmail } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Overlay, SideBar } from "../Sidebar/sidebar";
+import { useDebounce } from "@/Helper-functions/useDebounce";
+import { SearchDropDown } from "./searchDropdown";
 
 export function Navbar() {
   const [open, setOpenAction] = useState(false);
-  const input = "";
+  const [searchInput, setSearchInput] = useState("");
+  const [searchData, setSearchData] = useState([]);
+  const debouncedValue = useDebounce(searchInput, 500);
+  const baseUrl = process.env.NEXT_PUBLIC_BASEURL;
+
+  const handlesearch = (value: string) => {
+    setSearchInput(value);
+    console.log("immediate keystroke:", value);
+  };
+
+  useEffect(() => {
+    if (!debouncedValue.trim()) return;
+    async function fetchSearchedItems() {
+      try {
+        const result = await fetch(
+          `${baseUrl}/global-item-search/search-products`,
+          {
+            method: "POST",
+            headers: {
+              "content-Type": "application/json",
+            },
+            body: JSON.stringify({ searchQuery: debouncedValue }),
+          },
+        );
+
+        const data = await result.json();
+        setSearchData(data);
+      } catch (err) {
+        console.error("fetching search error:", err);
+      }
+    }
+
+    fetchSearchedItems();
+    console.log("debounced value:", debouncedValue);
+    console.log("fetched searchedData:", searchData);
+  }, [debouncedValue, baseUrl]);
+
   return (
     <nav className="w-full fixed z-50">
       {/** top bar for lg */}
@@ -85,9 +123,14 @@ export function Navbar() {
               <CiSearch size={20} />
             </span>
             <NavSearch
-              value={input}
+              value={searchInput}
               onChange={(value) => handlesearch(value)}
             />
+            {searchData && (
+              <>
+                <SearchDropDown query={debouncedValue} products={searchData} />
+              </>
+            )}
           </div>
         </div>
 
@@ -106,9 +149,15 @@ export function Navbar() {
               <CiSearch size={20} />
             </span>
             <NavSearch
-              value={input}
+              value={searchInput}
               onChange={(value) => handlesearch(value)}
             />
+
+            {searchData && (
+              <>
+                <SearchDropDown query={debouncedValue} products={searchData} />
+              </>
+            )}
           </div>
 
           {/* right side for tabs*/}
@@ -141,7 +190,7 @@ export function Navbar() {
               <CiSearch size={22} className="text-gray-400 font-semibold" />
             </span>
             <NavSearch
-              value={input}
+              value={searchInput}
               onChange={(value) => handlesearch(value)}
               className="w-full bg-white text-black text-sm placeholder-gray-400
               pl-10 pr-4 py-2.5 rounded-xl
@@ -158,6 +207,12 @@ export function Navbar() {
             >
               Search
             </div>
+
+            {searchData && (
+              <>
+                <SearchDropDown query={debouncedValue} products={searchData} />
+              </>
+            )}
           </div>
 
           {/* right side for desktop */}
@@ -177,14 +232,12 @@ export function Navbar() {
         </div>
       </div>
 
-      {
-        open && (
-          <>
-          <Overlay open={open} setOpenAction={setOpenAction}/>
-          <SideBar open={open} setOpenAction={setOpenAction}/>
-          </>
-        )
-      }
+      {open && (
+        <>
+          <Overlay open={open} setOpenAction={setOpenAction} />
+          <SideBar open={open} setOpenAction={setOpenAction} />
+        </>
+      )}
     </nav>
   );
 }
