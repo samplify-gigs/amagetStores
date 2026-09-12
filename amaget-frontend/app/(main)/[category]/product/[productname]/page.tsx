@@ -19,6 +19,7 @@ import { StickyAddToCart } from "@/components/EachProductPage/addTocart";
 import { RatingSummary } from "@/components/EachProductPage/rating-summary";
 import { ProductInfo } from "@/components/EachProductPage/productInf0";
 import { BreadCrumbs } from "@/components/EachProductPage/breadCrumbs";
+import { DeliveryInfo } from "@/components/EachProductPage/Delivery-info";
 
 const product = {
   name: "Wireless Headphone",
@@ -147,68 +148,76 @@ export default function EachProductPage() {
       </div>
 
       {/* sm and lg (>=640px) — max-w caps it on xl too, no extra breakpoint needed */}
-      <div className="mx-auto hidden max-w-7xl px-6 sm:block lg:px-8 mb-2 mt-2">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.1fr_1fr] lg:gap-14 ">
-          <ProductGalleryDesktop
-            images={product.images}
-            alt={product.name}
-            discountPercent={15}
-          />
+      <div className="mx-auto hidden max-w-7xl px-6 sm:block lg:px-8 xl:max-w-6xl mb-2 mt-2">
+        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm lg:p-10">
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
+            <ProductGalleryDesktop
+              images={product.images}
+              alt={product.name}
+              discountPercent={15}
+            />
 
-          <ProductDetailsPanel
-            name={product.name}
-            price={product.price}
-            originalPrice={product.originalPrice}
-            currency={product.currency}
-            rating={product.rating}
-            reviewCount={product.reviewCount}
-            features={featureHighlights}
-            trustBadges={trustBadges}
-            onAddToCart={handleAddToCart}
-          />
-        </div>
-
-        <div className="mt-10 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <ProductTabs
-                variant="underline"
-                reviewCount={product.reviewCount}
-                description={
-                  <div className="space-y-4 text-sm leading-relaxed text-gray-500">
-                    <p>
-                      Experience pure sound with our Wireless Headphone.
-                      Designed for comfort and built for performance, it
-                      delivers rich bass, clear highs, and seamless connectivity
-                      for an immersive audio experience.
-                    </p>
-                    <ul className="space-y-2">
-                      {descriptionPoints.map((point) => (
-                        <li
-                          key={point}
-                          className="flex items-center gap-2 text-gray-700"
-                        >
-                          <IoCheckmarkCircle className="h-4 w-4 flex-shrink-0 text-primary" />
-                          {point}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                }
-                reviews={
-                  <p className="text-sm leading-relaxed text-gray-500">
-                    Reviews list goes here.
-                  </p>
-                }
-              />
-            </div>
-
-            <div className="lg:pt-[52px]">
-              <RatingSummary
+            <div className="flex flex-col gap-6">
+              <ProductDetailsPanel
+                name={product.name}
+                price={product.price}
+                originalPrice={product.originalPrice}
+                currency={product.currency}
                 rating={product.rating}
                 reviewCount={product.reviewCount}
-                breakdown={ratingBreakdown}
+                features={featureHighlights}
+                trustBadges={trustBadges}
+                onAddToCart={handleAddToCart}
               />
+
+              <div className="hidden min-[1000px]:block">
+                <DeliveryInfo />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-10 border-t border-gray-100 pt-10">
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
+              <div className="lg:col-span-2">
+                <ProductTabs
+                  variant="underline"
+                  reviewCount={product.reviewCount}
+                  description={
+                    <div className="space-y-4 text-sm leading-relaxed text-gray-500">
+                      <p>
+                        Experience pure sound with our Wireless Headphone.
+                        Designed for comfort and built for performance, it
+                        delivers rich bass, clear highs, and seamless
+                        connectivity for an immersive audio experience.
+                      </p>
+                      <ul className="space-y-2">
+                        {descriptionPoints.map((point) => (
+                          <li
+                            key={point}
+                            className="flex items-center gap-2 text-gray-700"
+                          >
+                            <IoCheckmarkCircle className="h-4 w-4 flex-shrink-0 text-primary" />
+                            {point}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  }
+                  reviews={
+                    <p className="text-sm leading-relaxed text-gray-500">
+                      Reviews list goes here.
+                    </p>
+                  }
+                />
+              </div>
+
+              <div className="lg:pt-[52px]">
+                <RatingSummary
+                  rating={product.rating}
+                  reviewCount={product.reviewCount}
+                  breakdown={ratingBreakdown}
+                />
+              </div>
             </div>
           </div>
         </div>
