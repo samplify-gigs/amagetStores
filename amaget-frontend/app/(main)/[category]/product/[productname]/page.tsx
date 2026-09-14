@@ -147,7 +147,7 @@ export default function EachProductPage() {
         </div>
       </div>
 
-      {/* sm and lg (>=640px) — max-w caps it on xl too, no extra breakpoint needed */}
+      {/* sm and lg (>=640px) */}
       <div className="mx-auto hidden max-w-7xl px-6 sm:block lg:px-8 xl:max-w-6xl mb-2 mt-2">
         <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm lg:p-10">
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
