@@ -5,10 +5,18 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from 'DB/db';
 import { CategoryModule } from './category/category.module';
 import { GlobalItemSearchModule } from './global-item-search/global-item-search.module';
-
+import { NodeCronModule } from './node_cron/node_cron.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
-  imports: [ConfigModule.forRoot(), DatabaseModule, CategoryModule, GlobalItemSearchModule],
+  imports: [
+    ConfigModule.forRoot(),
+    ScheduleModule.forRoot(),
+    DatabaseModule,
+    CategoryModule,
+    GlobalItemSearchModule,
+    NodeCronModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
