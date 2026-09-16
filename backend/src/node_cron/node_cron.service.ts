@@ -24,44 +24,79 @@ export class NodeCronService {
   async onModuleInit() {
     this.logger.log('cron is running right away');
     try {
-      await this.hotsalesProducts();
+      await this.dailyHomeProducts();
     } catch (err) {
       this.logger.error('startup hotsales run failed', err);
     }
   }
 
   @Cron('*/5 * * * *')
-  async hotsalesProducts() {
+  async dailyHomeProducts() {
     const client = await this.db.connect();
 
     try {
-      this.logger.log('fetching 8 hotsales productfor the day');
-      const fetchQuery = ` select id , name, price, legacy_product_id, category_id 
+      this.logger.log('fetching 8 hotsales products for the day');
+      const fetchHotsalesQuery = ` select id , name, price, legacy_product_id, category_id 
+      from new_products order by random() limit 8
+      `;
+      const fetchUpgradePc = ` select id , name, price, legacy_product_id, category_id 
+      from new_products where category_id = $1 or category_id = $2 order by random() limit 8;
+      `;
+
+      const fetchBNPL = ` select id , name, price, legacy_product_id, category_id 
       from new_products order by random() limit 8
       `;
 
-      const result = await this.db.query<newProductsProps>(fetchQuery);
-      console.log('db hotsales result:', result.rows);
-      const newProducts = result.rows;
-      await client.query('BEGIN');
-      await client.query('DELETE FROM hot_sales');
-      const insertQuery =
-        'insert into hot_sales (id,name,price,legacy_product_id,category_id,slot) values($1,$2,$3,$4,$5,$6)';
+      const fetchLifestyle = ` select id , name, price, legacy_product_id, category_id 
+      from new_products where category_id = $1 order by random() limit 8;
+      `;
 
-      for (let i = 0; i < newProducts.length; i++) {
-        const currentProduct = newProducts[i];
-        await client.query(insertQuery, [
-          currentProduct.id,
-          currentProduct.name,
-          currentProduct.price,
-          currentProduct.legacy_product_id,
-          currentProduct.category_id,
-          i + 1,
-        ]);
-      }
+      const hotSalesRes =
+        await client.query<newProductsProps>(fetchHotsalesQuery);
+      const upgradePcRes = await client.query<newProductsProps>(
+        fetchUpgradePc,
+        [2, 3],
+      );
+      const bnplRes = await client.query<newProductsProps>(fetchBNPL);
+      const lifestyleRes = await client.query<newProductsProps>(
+        fetchLifestyle,
+        [6],
+      );
+      console.log('hs:', hotSalesRes.rows);
+      console.log('up:', upgradePcRes.rows);
+      console.log('bnpl:', bnplRes.rows);
+      console.log('lifestyle:', lifestyleRes.rows);
+
+      await client.query('BEGIN');
+      await client.query('DELETE FROM new_daily_products');
+      const insertQuery =
+        'insert into new_daily_products (id,name,price,legacy_product_id,category_id,slot,section) values($1,$2,$3,$4,$5,$6,$7)';
+
+      const insertItems = async (
+        products: newProductsProps[],
+        section: string,
+      ) => {
+        for (let i = 0; i < products.length; i++) {
+          const eachProduct = products[i];
+          await client.query(insertQuery, [
+            eachProduct.id,
+            eachProduct.name,
+            eachProduct.price,
+            eachProduct.legacy_product_id,
+            eachProduct.category_id,
+            i + 1,
+            section,
+          ]);
+        }
+      };
+
+      await insertItems(hotSalesRes.rows, 'hot-sales');
+      await insertItems(upgradePcRes.rows, 'upgrade-Pc');
+      await insertItems(bnplRes.rows, 'bnpl');
+      await insertItems(lifestyleRes.rows, 'lifestyle');
 
       await client.query('COMMIT');
-      this.logger.log('successfully updated');
+      this.logger.log('daily products successfully updated');
     } catch (err) {
       this.logger.error('err fetching is:', err);
       throw new InternalServerErrorException(
@@ -73,15 +108,88 @@ export class NodeCronService {
   }
 
   async getHotSalesLiveProducts() {
-    const query = `select hot_sales.id,hot_sales.price,hot_sales.name,hot_sales.legacy_product_id,
-    hot_sales.category_id,new_categories.slug as categ_name, url from hot_sales 
-    LEFT JOIN new_categories on hot_sales.category_id = new_categories.id 
-    left join lateral ( select url from new_images where product_id = hot_sales.id limit 1) on true limit 8;`;
+    try {
+      const query = `select new_daily_products.id,new_daily_products.price,new_daily_products.name,new_daily_products.legacy_product_id,
+    new_daily_products.category_id,new_categories.slug as categ_name, url from new_daily_products 
+    LEFT JOIN new_categories on new_daily_products.category_id = new_categories.id 
+    left join lateral ( select url from new_images where product_id = new_daily_products.id limit 1) img on true 
+    where new_daily_products.section = $1 limit 8
+    ;`;
 
-    const result = await this.db.query(query);
+      const result = await this.db.query(query, ['hot-sales']);
 
-    return {
-      hotsales: result.rows,
-    };
+      return {
+        hotsales: result.rows,
+      };
+    } catch (err) {
+      console.error('hot sales err:', err);
+      throw new InternalServerErrorException(
+        'could not fecth hot sales products',
+      );
+    }
+  }
+
+  async getUpgradePcProducts() {
+    try {
+      const query = `select new_daily_products.id,new_daily_products.price,new_daily_products.name,new_daily_products.legacy_product_id,
+    new_daily_products.category_id,new_categories.slug as categ_name, url from new_daily_products 
+    LEFT JOIN new_categories on new_daily_products.category_id = new_categories.id 
+    left join lateral ( select url from new_images where product_id = new_daily_products.id limit 1) img on true 
+	where new_daily_products.section = $1 limit 8
+	;`;
+
+      const result = await this.db.query(query, ['upgrade-Pc']);
+
+      return {
+        upgradePc: result.rows,
+      };
+    } catch (err) {
+      console.error('upgradePc err:', err);
+      throw new InternalServerErrorException(
+        'could not fecth upgrade Pc products',
+      );
+    }
+  }
+
+  async getBnplProducts() {
+    try {
+      const query = `select new_daily_products.id,new_daily_products.price,new_daily_products.name,new_daily_products.legacy_product_id,
+    new_daily_products.category_id,new_categories.slug as categ_name, url from new_daily_products 
+    LEFT JOIN new_categories on new_daily_products.category_id = new_categories.id 
+    left join lateral ( select url from new_images where product_id = new_daily_products.id limit 1) img on true 
+	where new_daily_products.section = $1 limit 8
+	;`;
+
+      const result = await this.db.query(query, ['bnpl']);
+
+      return {
+        upgradePc: result.rows,
+      };
+    } catch (err) {
+      console.error('bnpl err:', err);
+      throw new InternalServerErrorException('could not fecth bnpl products');
+    }
+  }
+
+  async getLifestyleProducts() {
+    try {
+      const query = `select new_daily_products.id,new_daily_products.price,new_daily_products.name,new_daily_products.legacy_product_id,
+    new_daily_products.category_id,new_categories.slug as categ_name, url from new_daily_products 
+    LEFT JOIN new_categories on new_daily_products.category_id = new_categories.id 
+    left join lateral ( select url from new_images where product_id = new_daily_products.id limit 1) img on true 
+	where new_daily_products.section = $1 limit 8
+	;`;
+
+      const result = await this.db.query(query, ['lifestyle']);
+
+      return {
+        Lifestyle: result.rows,
+      };
+    } catch (err) {
+      console.error('lifestyle err:', err);
+      throw new InternalServerErrorException(
+        'could not fecth lifestyle products',
+      );
+    }
   }
 }

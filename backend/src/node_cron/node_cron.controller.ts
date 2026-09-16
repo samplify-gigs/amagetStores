@@ -3,12 +3,12 @@ import { NodeCronService } from './node_cron.service';
 
 @Controller('node-cron')
 export class NodeCronController {
-  constructor(private readonly hotSalesProducts: NodeCronService) {
+  constructor(private readonly dailyHomeProducts: NodeCronService) {
    
   }
 
-  @Get()
+  @Get('hotsales-home')
   getHostsalesProduct() {
-    return this.hotSalesProducts.getHotSalesLiveProducts();
+    return this.dailyHomeProducts.getHotSalesLiveProducts();
   }
 }
