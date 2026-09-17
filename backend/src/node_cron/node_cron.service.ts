@@ -62,10 +62,6 @@ export class NodeCronService {
         fetchLifestyle,
         [6],
       );
-      console.log('hs:', hotSalesRes.rows);
-      console.log('up:', upgradePcRes.rows);
-      console.log('bnpl:', bnplRes.rows);
-      console.log('lifestyle:', lifestyleRes.rows);
 
       await client.query('BEGIN');
       await client.query('DELETE FROM new_daily_products');
@@ -116,11 +112,11 @@ export class NodeCronService {
     where new_daily_products.section = $1 limit 8
     ;`;
 
-      const result = await this.db.query(query, ['hot-sales']);
+      const { rows: result } = await this.db.query<newProductsProps>(query, [
+        'hot-sales',
+      ]);
 
-      return {
-        hotsales: result.rows,
-      };
+      return result;
     } catch (err) {
       console.error('hot sales err:', err);
       throw new InternalServerErrorException(
@@ -138,11 +134,11 @@ export class NodeCronService {
 	where new_daily_products.section = $1 limit 8
 	;`;
 
-      const result = await this.db.query(query, ['upgrade-Pc']);
+      const { rows: result } = await this.db.query<newProductsProps>(query, [
+        'upgrade-Pc',
+      ]);
 
-      return {
-        upgradePc: result.rows,
-      };
+      return result;
     } catch (err) {
       console.error('upgradePc err:', err);
       throw new InternalServerErrorException(
@@ -160,11 +156,11 @@ export class NodeCronService {
 	where new_daily_products.section = $1 limit 8
 	;`;
 
-      const result = await this.db.query(query, ['bnpl']);
+      const { rows: result } = await this.db.query<newProductsProps>(query, [
+        'bnpl',
+      ]);
 
-      return {
-        upgradePc: result.rows,
-      };
+      return result;
     } catch (err) {
       console.error('bnpl err:', err);
       throw new InternalServerErrorException('could not fecth bnpl products');
@@ -180,16 +176,32 @@ export class NodeCronService {
 	where new_daily_products.section = $1 limit 8
 	;`;
 
-      const result = await this.db.query(query, ['lifestyle']);
+      const { rows: result } = await this.db.query<newProductsProps>(query, [
+        'lifestyle',
+      ]);
 
-      return {
-        Lifestyle: result.rows,
-      };
+      return result;
     } catch (err) {
       console.error('lifestyle err:', err);
       throw new InternalServerErrorException(
         'could not fecth lifestyle products',
       );
     }
+  }
+
+  async getHomeProducts() {
+    const [hotsales, upgradepc, bnpl, lifestyle] = await Promise.all([
+      this.getHotSalesLiveProducts(),
+      this.getUpgradePcProducts(),
+      this.getBnplProducts(),
+      this.getLifestyleProducts(),
+    ]);
+
+    return {
+      hotsales: hotsales,
+      upgradepc: upgradepc,
+      bnpl: bnpl,
+      lifestyle: lifestyle,
+    };
   }
 }

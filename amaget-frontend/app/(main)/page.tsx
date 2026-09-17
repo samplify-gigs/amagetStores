@@ -19,8 +19,8 @@ interface CarouselItems {
 
 interface HomepageData {
   hotsales: CarouselItems[];
-  upgradPc: CarouselItems[];
-  Lifestyle: CarouselItems[];
+  upgradepc: CarouselItems[];
+  lifestyle: CarouselItems[];
   bnpl: CarouselItems[];
 }
 
@@ -32,8 +32,7 @@ export default function Home() {
   useEffect(() => {
     const fetchHomepageProducts = async () => {
       try {
-        setIsloading(true);
-        const result = await fetch(`${urlHome}`);
+        const result = await fetch(`${urlHome}/node-cron/home-daily-products`);
         const res = await result.json();
         setData(res);
         console.log("products:", res);
@@ -53,8 +52,8 @@ export default function Home() {
       <section className="bg-secondary">
         <HotSales hotsales={data?.hotsales || []} isloading={isloading} />
         <BrowseCategorySection />
-        <UpgradePc upgrade={data?.upgradPc || []} isloading={isloading} />
-        <Lifestyle lifestyle={data?.Lifestyle || []} isloading={isloading} />
+        <UpgradePc upgrade={data?.upgradepc || []} isloading={isloading} />
+        <Lifestyle lifestyle={data?.lifestyle || []} isloading={isloading} />
         <BNPL bnpl={data?.bnpl || []} isloading={isloading} />
       </section>
     </main>
