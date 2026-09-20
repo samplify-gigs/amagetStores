@@ -3,7 +3,7 @@ import { inter, lusitana } from "@/fonts";
 import { Navbar } from "@/components/Navigation/NavBar";
 import "./globals.css";
 import { FooterSec } from "@/components/Footer/footer";
-import { NavsideOv } from "@/components/Navigation/NavsideOv";
+
 
 export const metadata: Metadata = {
   title: "amaget stores",

@@ -11,10 +11,12 @@ import {
   CATBRAND as BRAND,
   TRENDING,
   CategoriesForSidebar,
+  allowedCategories,
 } from "@/db/mock";
 import { ChevronRight } from "lucide-react";
 import { useParams, useSearchParams } from "next/navigation";
 import { CategPagination } from "@/components-utils/Paginatiom/Categ-Pagination";
+import NotFound from "@/app/not-found";
 
 type CategProdProps = {
   id: string;
@@ -33,6 +35,13 @@ export default function CategoryPage() {
 
   const resolveParams = useParams<{ category: string }>();
   const { category } = resolveParams;
+  const cleanCategory = category
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9-]/g, "");
+
+  const categoryId = allowedCategories[cleanCategory];
+
   const activeFilterCount = Object.values(selected).flat().length;
   const searchParams = useSearchParams();
 
@@ -53,7 +62,7 @@ export default function CategoryPage() {
           headers: {
             "content-Type": "application/json",
           },
-          body: JSON.stringify({ offset }),
+          body: JSON.stringify({ categoryId, offset }),
         });
 
         const res = await result.json();
@@ -68,7 +77,13 @@ export default function CategoryPage() {
 
     fetchCategproducts();
   }, [offset, urlHome]);
-
+  if (!(cleanCategory in allowedCategories)) {
+    return (
+      <>
+        <NotFound />
+      </>
+    );
+  }
   return (
     <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans mt-29">
       {/* HEADER  */}

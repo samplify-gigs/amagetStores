@@ -320,25 +320,25 @@ export const LifestyleItems = [
   },
 ];
 
-export const allowedCategories = [
-  "phones-tablets",
-  "laptops",
-  "desktop",
-  "monitors",
-  "printers-scanners-copiers",
-  "accessories-lifestyle",
-  "servers",
-  "gaming",
-  "phone-parts",
-  "computer-accessories",
-  "software",
-  "power-backup",
-  "electronics",
-  "cctv-security",
-  "camera-lenses",
-  "home-appliances",
-  "internet-and-networking",
-];
+export const allowedCategories: Record<string, number> = {
+  "phones-tablets": 1,
+  "laptops": 2,
+  "desktop": 3,
+  "monitors": 4,
+  "printers-scanners-copiers": 5,
+  "accessories-lifestyle": 6,
+  "servers": 7,
+  "gaming": 8,
+  "phone-parts": 9,
+  "computer-accessories": 10,
+  "software": 11,
+  "power-backup": 12,
+  "electronics": 13,
+  "cctv-security": 14,
+  "camera-lenses": 15,
+  "home-appliances": 16,
+  "internet-and-networking": 17,
+};
 
 export const CategoriesForSidebar = [
   { icon: TfiMobile, label: "Phones and Tablet", href: "/phones-tablets" },

@@ -104,7 +104,7 @@ export function HeroCarousel() {
     [],
   );
   return (
-    <div className="w-full mt-29 lg:mt-33">
+    <div className="w-full mt-30 sm:mt-20 lg:mt-33 px-1">
       {/** mobile and tabs layout */}
       <Carousel
         plugins={[mobilePlugin]}
@@ -112,9 +112,9 @@ export function HeroCarousel() {
           align: "start",
           loop: true,
         }}
-        className="w-full lg:hidden"
-        onMouseEnter={plugin.stop}
-        onMouseLeave={plugin.reset}
+        className="w-full lg:hidden rounded-2xl overflow-hidden"
+        onMouseEnter={mobilePlugin.stop}
+        onMouseLeave={mobilePlugin.reset}
       >
         <CarouselContent className="-ml-0">
           {HeroImages.map((image) => (
