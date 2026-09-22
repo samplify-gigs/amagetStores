@@ -1,9 +1,9 @@
-import { ProductCardSkeleton } from "./productskeletons";
+import { LifestyleCardSkeletonMain } from "./lifestlemainskeleton";
 
 export function LifestyleGridSkeleton({ count = 16 }: { count?: number }) {
   return (
     <div className="border border-gray-200 border-t-0">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-8 ">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-8">
         {Array.from({ length: count }).map((_, i) => (
           <div
             key={i}
@@ -14,7 +14,7 @@ export function LifestyleGridSkeleton({ count = 16 }: { count?: number }) {
             "
           >
             <div className="h-full">
-              <ProductCardSkeleton />
+              <LifestyleCardSkeletonMain />
             </div>
           </div>
         ))}

@@ -10,7 +10,7 @@ import { NavSearch } from "@/components-utils/Navbar/Navseach";
 import { IoIosCall } from "react-icons/io";
 import { MdOutlineEmail } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Overlay, SideBar } from "../Sidebar/sidebar";
 import { useDebounce } from "@/Helper-functions/useDebounce";
 import { SearchDropDown } from "./searchDropdown";
@@ -19,6 +19,7 @@ export function Navbar() {
   const [open, setOpenAction] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [searchData, setSearchData] = useState([]);
+  const navRef = useRef<HTMLElement>(null);
   const debouncedValue = useDebounce(searchInput, 500);
   const baseUrl = process.env.NEXT_PUBLIC_BASEURL;
 
@@ -26,6 +27,23 @@ export function Navbar() {
     setSearchInput(value);
     console.log("immediate keystroke:", value);
   };
+  useEffect(() => {
+    const el = navRef.current;
+    if (!el) return;
+
+    const setNavHeight = () => {
+      document.documentElement.style.setProperty(
+        "--nav-height",
+        `${el.offsetHeight}px`,
+      );
+    };
+
+    setNavHeight();
+    const observer = new ResizeObserver(setNavHeight);
+    observer.observe(el);
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!debouncedValue.trim()) return;
@@ -55,7 +73,7 @@ export function Navbar() {
   }, [debouncedValue, baseUrl]);
 
   return (
-    <nav className="w-full fixed z-50">
+    <nav ref={navRef} className="w-full fixed z-50">
       {/** top bar for lg */}
       <div className=" hidden lg:flex gap-4 w-full bg-secondary border-b border-gray-200 shadow-lg justify-center text-gray-600 p-2 text-xs items-center">
         <div className="flex gap-4 items-center">

@@ -104,7 +104,7 @@ export function HeroCarousel() {
     [],
   );
   return (
-    <div className="w-full mt-30 sm:mt-20 lg:mt-33 px-1">
+    <div className="w-full px-1">
       {/** mobile and tabs layout */}
       <Carousel
         plugins={[mobilePlugin]}
