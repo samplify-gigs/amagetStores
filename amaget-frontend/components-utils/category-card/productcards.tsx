@@ -5,6 +5,7 @@ import { CATBRAND as BRAND } from "@/db/mock";
 import { Heart } from "lucide-react";
 import { Rating } from "../category-product-pages/ratings";
 import { PriceFormatter } from "@/Helper-functions/price";
+import { CartButtonContent } from "./cart-button-content";
 
 type CategProdProps = {
   id: string;
@@ -20,7 +21,15 @@ type itemProps = {
 
 export function ProductCard({ p }: itemProps) {
   const [fav, setFav] = useState(false);
+  const [added, setAdded] = useState(false);
   const discount = 55;
+
+  const handleAddToCart = () => {
+    if (added) return;
+    setAdded(true);
+
+    window.setTimeout(() => setAdded(false), 1800);
+  };
 
   return (
     <div className="group bg-secondary rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-200">
@@ -42,6 +51,8 @@ export function ProductCard({ p }: itemProps) {
             -{discount}%
           </span>
         )}
+
+        {/**wishlist button */}
         <button
           onClick={() => setFav((f) => !f)}
           aria-label="Add to wishlist"
@@ -63,6 +74,43 @@ export function ProductCard({ p }: itemProps) {
             ₦{PriceFormatter(p.price)}
           </span>
         </div>
+
+        {/* Mobile/tablet-only: always visible pill */}
+        <button
+          onClick={handleAddToCart}
+          disabled={added}
+          aria-label={added ? "Added to cart" : "Add to cart"}
+          className={`
+            lg:hidden mt-2.5 w-full h-9
+            rounded-full text-[12.5px] font-semibold text-white select-none
+            transition-all duration-300 ease-out
+            active:scale-[0.96]
+            ${added ? "bg-emerald-500 scale-[1.02] ring-1 ring-emerald-200" : "ring-0 ring-transparent"}
+          `}
+          style={!added ? { backgroundColor: BRAND } : undefined}
+        >
+          <CartButtonContent added={added} />
+        </button>
+
+        {/* Desktop-only: hidden until hover, floats over the image */}
+        <button
+          onClick={handleAddToCart}
+          disabled={added}
+          aria-label={added ? "Added to cart" : "Add to cart"}
+          className={`
+            hidden lg:flex
+             h-9 w-full
+            rounded-full text-[12.5px] font-semibold text-white select-none
+            transition-all duration-300 ease-out
+            translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100
+            shadow-md group-hover:shadow-lg
+            active:scale-[0.97]
+            ${added ? "bg-emerald-500 ring-1 ring-emerald-200" : "ring-0 ring-transparent hover:brightness-95"}
+          `}
+          style={!added ? { backgroundColor: BRAND } : undefined}
+        >
+          <CartButtonContent added={added} />
+        </button>
       </div>
     </div>
   );

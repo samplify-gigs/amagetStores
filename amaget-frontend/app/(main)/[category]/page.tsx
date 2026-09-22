@@ -85,7 +85,7 @@ export default function CategoryPage() {
     );
   }
   return (
-    <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans mt-29">
+    <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans">
       {/* HEADER  */}
       <div className="bg-white border-b border-gray-100 ">
         <div className="max-w-[1400px] mx-auto px-4 lg:px-6 py-4 lg:py-6 mt-5">
