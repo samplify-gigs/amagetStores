@@ -22,7 +22,6 @@ interface CarouselItems {
 
 interface HomepageData {
   hotsales: CarouselItems[];
-  
 }
 
 type FetchStatus = "loading" | "error" | "success";

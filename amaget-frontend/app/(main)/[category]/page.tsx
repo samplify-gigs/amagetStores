@@ -20,7 +20,9 @@ import NotFound from "@/app/not-found";
 
 type CategProdProps = {
   id: string;
+  legacy_product_id: string;
   name: string;
+  slug: string;
   price: string;
   total_count: string;
   url: string;
@@ -106,7 +108,7 @@ export default function CategoryPage() {
       {/* ============ BODY ============ */}
       <div className="max-w-[1400px] mx-auto px-4 lg:px-6 py-4 lg:py-6 flex gap-6">
         {/* ---- Desktop sidebar ---- */}
-        <aside className="hidden lg:block w-[250px] shrink-0 bg-secondary p-2 rounded-xl">
+        <aside className="hidden lg:block w-[220px] xl:w-[260px] shrink-0 bg-secondary p-2 rounded-xl">
           <div className="sticky top-6 space-y-5">
             <div>
               <h2 className="text-[12px] font-bold ml-2 text-gray-400 uppercase tracking-wide mb-2">
@@ -175,9 +177,9 @@ export default function CategoryPage() {
         </aside>
 
         {/* ---- Main content ---- */}
-        <main className="flex-1 min-w-0">
+        <main className="flex-1 w-full">
           {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
               {Array.from({ length: 8 }).map((_, i) => (
                 <ProductSkeleton key={i} />
               ))}
@@ -185,9 +187,9 @@ export default function CategoryPage() {
           ) : categProducts?.length === 0 ? (
             <EmptyState />
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 lg:gap-3 xl:gap-4">
               {categProducts?.map((p) => (
-                <ProductCard key={p.id} p={p} />
+                <ProductCard key={p.id} p={p} category={cleanCategory} />
               ))}
             </div>
           )}

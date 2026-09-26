@@ -1,6 +1,9 @@
+"use client";
+
 import { IoStar } from "react-icons/io5";
 import { QuantityAddToCart } from "./QuantityAddToCart.";
-
+import { useState } from "react";
+import { StockStatus } from "./stockstatus-desk";
 
 interface ProductDetailsPanelProps {
   name: string;
@@ -21,10 +24,9 @@ export function ProductDetailsPanel({
   currency = "$",
   rating,
   reviewCount,
-  features,
-  trustBadges,
   onAddToCart,
 }: ProductDetailsPanelProps) {
+  const [inStock, setInStock] = useState<boolean | null>(false);
   return (
     <div className="flex flex-col">
       <h1 className="text-2xl font-bold text-gray-900">{name}</h1>
@@ -51,6 +53,8 @@ export function ProductDetailsPanel({
           )}
         </div>
       )}
+
+      <StockStatus inStock={inStock} />
 
       <div className="mt-6 border-t border-gray-100 pt-6">
         <QuantityAddToCart onAddToCart={onAddToCart} />

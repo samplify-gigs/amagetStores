@@ -1,15 +1,18 @@
 "use client";
 import { useState } from "react";
 import { CldImage } from "next-cloudinary";
-import { CATBRAND as BRAND } from "@/db/mock";
+import { allowedCategories, CATBRAND as BRAND } from "@/db/mock";
 import { Heart } from "lucide-react";
 import { Rating } from "../category-product-pages/ratings";
 import { PriceFormatter } from "@/Helper-functions/price";
 import { CartButtonContent } from "./cart-button-content";
+import Link from "next/link";
 
 type CategProdProps = {
   id: string;
+  legacy_product_id: string;
   name: string;
+  slug: string;
   price: string;
   total_count: string;
   url: string;
@@ -17,12 +20,17 @@ type CategProdProps = {
 
 type itemProps = {
   p: CategProdProps;
+  category: string | undefined;
 };
 
-export function ProductCard({ p }: itemProps) {
+export function ProductCard({ p, category }: itemProps) {
   const [fav, setFav] = useState(false);
   const [added, setAdded] = useState(false);
   const discount = 55;
+  const cleanProductName = p.slug
+    ? p.slug.trim().toLowerCase().replace(/\s+/g, "-").replace(/-+/g, "-")
+    : "";
+  const slug = `${cleanProductName}-${p.legacy_product_id}`;
 
   const handleAddToCart = () => {
     if (added) return;
@@ -66,14 +74,16 @@ export function ProductCard({ p }: itemProps) {
       </div>
 
       <div className="p-2.5 sm:p-3">
-        <h3 className="text-[12.5px] sm:text-[13px] font-semibold text-gray-900 leading-snug line-clamp-1">
-          {p.name}
-        </h3>
-        <div className="flex items-center gap-1.5 mt-1.5">
-          <span className="text-[13px] sm:text-[14px] font-bold text-gray-900">
-            ₦{PriceFormatter(p.price)}
-          </span>
-        </div>
+        <Link href={`/${category}/product/${slug}`}>
+          <h3 className="text-[12.5px] sm:text-[13px] font-semibold text-gray-900 leading-snug line-clamp-1">
+            {p.name}
+          </h3>
+          <div className="flex items-center gap-1.5 mt-1.5">
+            <span className="text-[13px] sm:text-[14px] font-bold text-gray-900">
+              ₦{PriceFormatter(p.price)}
+            </span>
+          </div>
+        </Link>
 
         {/* Mobile/tablet-only: always visible pill */}
         <button
@@ -100,7 +110,7 @@ export function ProductCard({ p }: itemProps) {
           className={`
             hidden lg:flex
              h-9 w-full
-            rounded-full text-[12.5px] font-semibold text-white select-none
+            rounded-full text-[12.5px] font-semibold text-white select-none mt-2.5
             transition-all duration-300 ease-out
             translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100
             shadow-md group-hover:shadow-lg

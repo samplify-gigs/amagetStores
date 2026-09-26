@@ -20,6 +20,8 @@ import { RatingSummary } from "@/components/EachProductPage/rating-summary";
 import { ProductInfo } from "@/components/EachProductPage/productInf0";
 import { BreadCrumbs } from "@/components/EachProductPage/breadCrumbs";
 import { DeliveryInfo } from "@/components/EachProductPage/Delivery-info";
+import { useState } from "react";
+import { StockStatus } from "@/components/EachProductPage/stockstatus-desk";
 
 const product = {
   name: "Wireless Headphone",
@@ -85,9 +87,10 @@ const ratingBreakdown = [
 
 export default function EachProductPage() {
   const handleAddToCart = (qty: number) => console.log("add to cart", qty);
+  const [inStock, setInStock] = useState<boolean | null>(false);
 
   return (
-    <main className="mt-30 sm:mt-17 md:mt-23 bg-gray-50">
+    <main className="bg-gray-50">
       <BreadCrumbs
         items={[
           { label: "Clothing", href: "/category/clothing" },
@@ -111,6 +114,7 @@ export default function EachProductPage() {
             rating={product.rating}
             reviewCount={product.reviewCount}
           />
+          <StockStatus inStock={inStock} />
 
           <div className="mt-1">
             <ProductTabs
@@ -170,9 +174,7 @@ export default function EachProductPage() {
                 onAddToCart={handleAddToCart}
               />
 
-              <div className="hidden min-[1000px]:block">
-                <DeliveryInfo />
-              </div>
+             
             </div>
           </div>
 

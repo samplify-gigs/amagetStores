@@ -14,7 +14,7 @@ export function BreadCrumbs({ items }: BreadCrumbsProps) {
   return (
     <nav
       aria-label="Breadcrumb"
-      className="bg-secondary p-2 text-sm text-gray-500 sm:px-6 lg:mt-35"
+      className="bg-secondary p-2 text-sm text-gray-500 sm:px-6 mt-2"
     >
       <div className="lg:px-8 xl:max-w-6xl ">
         <ol className="flex items-center gap-1.5">

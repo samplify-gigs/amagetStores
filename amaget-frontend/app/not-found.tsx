@@ -5,7 +5,7 @@ import { SearchX } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="min-h-[70vh] lg:min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-[60vh] lg:min-h-screen flex items-center justify-center px-4">
       <div className="flex flex-col items-center text-center max-w-sm">
         <div className="w-14 h-14 rounded-full bg-[color:var(--primary)]/10 flex items-center justify-center mb-4">
           <SearchX size={28} style={{ color: "var(--primary)" }} />

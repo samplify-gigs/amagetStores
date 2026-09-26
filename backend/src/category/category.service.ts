@@ -21,8 +21,8 @@ export class CategoryService {
     const { categoryId, offset } = body;
 
     try {
-      const query = `select new_products.id,
-    new_products.name, new_products.price, img.url as url,
+      const query = `select new_products.id,new_products.legacy_product_id,
+    new_products.name,new_products.slug, new_products.price, img.url as url,
     count(*) over() as total_count
     from new_products
     left join lateral (
