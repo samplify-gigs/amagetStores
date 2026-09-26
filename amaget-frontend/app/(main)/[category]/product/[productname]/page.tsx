@@ -20,22 +20,29 @@ import { RatingSummary } from "@/components/EachProductPage/rating-summary";
 import { ProductInfo } from "@/components/EachProductPage/productInf0";
 import { BreadCrumbs } from "@/components/EachProductPage/breadCrumbs";
 import { DeliveryInfo } from "@/components/EachProductPage/Delivery-info";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StockStatus } from "@/components/EachProductPage/stockstatus-desk";
+import { useParams } from "next/navigation";
+import { urlHome } from "@/db/mock";
+import { ProductPageError } from "@/components/EachProductPage/erro-states/error-page";
+import { MobileProductSkeleton } from "@/components/EachProductPage/loading-states/mobile-skeleton";
+import { DesktopProductSkeleton } from "@/components/EachProductPage/loading-states/desktop-skeleton";
+import { formatCategoryLabel } from "@/Helper-functions/productPage";
 
-const product = {
-  name: "Wireless Headphone",
-  price: 200,
-  originalPrice: 500,
-  currency: "₦",
-  sellerName: "Tariqul Islam",
-  rating: 4.1,
-  reviewCount: 120,
-  images: [
-    "/Lifestyle/airpods pro.webp",
-    "/Lifestyle/Led lightning.webp",
-    "/Lifestyle/Onyx sydio 9.webp",
-  ],
+type ProductData = {
+  id: number;
+  legacy_product_id: number;
+  name: string;
+  slug: string;
+  description: string;
+  price: number;
+  category_id: number;
+  cat_name: string;
+  in_stock: boolean | null;
+  images: string[];
+  sellerName?: string;
+  rating?: number | undefined;
+  reviewCount: number;
 };
 
 const featureHighlights = [
@@ -86,17 +93,86 @@ const ratingBreakdown = [
 ];
 
 export default function EachProductPage() {
+  const [products, setProducts] = useState<ProductData[] | null>(null);
+  const [inStock, setInStock] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [retrycount, setRetrycount] = useState(0);
+  const [error, setError] = useState(false);
+
   const handleAddToCart = (qty: number) => console.log("add to cart", qty);
-  const [inStock, setInStock] = useState<boolean | null>(false);
+  const resolveParams = useParams<{ productname: string }>();
+  const { productname } = resolveParams;
+  const ProductId = productname.split("-").pop();
+  const legacyProductId = Number(ProductId);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const result = await fetch(`${urlHome}/products`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ legacyProductId }),
+        });
+
+        if (!result.ok) throw new Error(`Request failed with ${result.status}`);
+
+        const data = await result.json();
+        setProducts(data.product?.[0] ?? data);
+        setInStock(data.inStock ?? null);
+      } catch (err) {
+        console.error("couldn't fetch product:", err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+  }, [legacyProductId, retrycount]);
+
+  console.log("result poducts:", products?.[0]);
+  const categoryLabel = formatCategoryLabel(products?.[0]?.cat_name);
+
+  const fetchProduct = () => {
+    setRetrycount((prev) => prev + 1);
+  };
+
+  if (error) {
+    return <ProductPageError onRetry={fetchProduct} />;
+  }
+
+  if (loading || !products) {
+    return (
+      <main className="bg-gray-50">
+        <BreadCrumbs
+          items={[
+            {
+              label: categoryLabel,
+              href: `/${products?.[0]?.cat_name}`,
+            },
+            {
+              label: products?.[0]?.name ?? "",
+              href: `/${products?.[0]?.cat_name}/product/${products?.[0]?.slug}-${products?.[0]?.legacy_product_id}`,
+            },
+          ]}
+        />
+        <MobileProductSkeleton />
+        <DesktopProductSkeleton />
+      </main>
+    );
+  }
 
   return (
     <main className="bg-gray-50">
       <BreadCrumbs
         items={[
-          { label: "Clothing", href: "/category/clothing" },
           {
-            label: "Hulchi",
-            href: "/category/clothing/hulchi-pijama",
+            label: categoryLabel,
+            href: `/${products?.[0]?.cat_name}`,
+          },
+          {
+            label: products?.[0]?.name ?? "",
+            href: `/${products?.[0]?.cat_name}/product/${products?.[0]?.slug}-${products?.[0]?.legacy_product_id}`,
           },
         ]}
       />
@@ -104,30 +180,28 @@ export default function EachProductPage() {
       {/* Mobile (<640px) */}
 
       <div className="sm:hidden bg-secondary">
-        <ProductImageGallery images={product.images} alt={product.name} />
+        <ProductImageGallery
+          images={products?.[0].images}
+          alt={products?.[0].slug}
+        />
 
         <div className="p-4 max-w-[420px]">
           <ProductInfo
-            name={product.name}
-            price={product.price}
-            sellerName={product.sellerName}
-            rating={product.rating}
-            reviewCount={product.reviewCount}
+            name={products?.[0].name}
+            price={products?.[0].price}
+            sellerName={products?.[0].sellerName}
+            rating={products?.[0].rating}
+            reviewCount={products?.[0].reviewCount}
           />
           <StockStatus inStock={inStock} />
 
           <div className="mt-1">
             <ProductTabs
               variant="underline"
-              reviewCount={product.reviewCount}
+              reviewCount={products?.[0].reviewCount}
               description={
                 <div className="space-y-4 text-sm leading-relaxed text-gray-500">
-                  <p>
-                    Experience pure sound with our Wireless Headphone. Designed
-                    for comfort and built for performance, it delivers rich
-                    bass, clear highs, and seamless connectivity for an
-                    immersive audio experience.
-                  </p>
+                  <p>{products?.[0].description}</p>
                   <ul className="space-y-2">
                     {descriptionPoints.map((point) => (
                       <li
@@ -155,26 +229,26 @@ export default function EachProductPage() {
       <div className="mx-auto hidden max-w-7xl px-6 sm:block lg:px-8 xl:max-w-6xl mb-2 mt-2">
         <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm lg:p-10">
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
-            <ProductGalleryDesktop
-              images={product.images}
-              alt={product.name}
-              discountPercent={15}
-            />
+            <div className="min-w-0">
+              <ProductGalleryDesktop
+                images={products?.[0].images}
+                alt={products?.[0].name}
+                discountPercent={15}
+              />
+            </div>
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6 min-w-0">
               <ProductDetailsPanel
-                name={product.name}
-                price={product.price}
-                originalPrice={product.originalPrice}
-                currency={product.currency}
-                rating={product.rating}
-                reviewCount={product.reviewCount}
+                name={products?.[0].name}
+                price={products?.[0].price}
+                originalPrice={products?.[0].originalPrice}
+                currency={products?.[0].currency}
+                rating={products?.[0].rating}
+                reviewCount={products?.[0].reviewCount}
                 features={featureHighlights}
                 trustBadges={trustBadges}
                 onAddToCart={handleAddToCart}
               />
-
-             
             </div>
           </div>
 
@@ -183,7 +257,7 @@ export default function EachProductPage() {
               <div className="lg:col-span-2">
                 <ProductTabs
                   variant="underline"
-                  reviewCount={product.reviewCount}
+                  reviewCount={products?.[0].reviewCount}
                   description={
                     <div className="space-y-4 text-sm leading-relaxed text-gray-500">
                       <p>
@@ -214,11 +288,11 @@ export default function EachProductPage() {
               </div>
 
               <div className="lg:pt-[52px]">
-                <RatingSummary
-                  rating={product.rating}
-                  reviewCount={product.reviewCount}
+                {/*<RatingSummary
+                  rating={products?.[0].rating}
+                  reviewCount={products?.[0].reviewCount}
                   breakdown={ratingBreakdown}
-                />
+                />*/}
               </div>
             </div>
           </div>

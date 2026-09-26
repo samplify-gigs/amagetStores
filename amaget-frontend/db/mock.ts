@@ -435,3 +435,4 @@ export const CATPRODUCTS = [
  
 export const CATBRAND = "#fc0056"; 
 
+export const urlHome = process.env.NEXT_PUBLIC_BASEURL;

@@ -23,7 +23,7 @@ export default function CartPage() {
   }
 
   return (
-    <main className="mt-30 pb-2 sm:pb-10 sm:mt-18 md:mt-24 lg:mt-30">
+    <main className="pb-2 sm:pb-10 sm:mt-18 md:mt-24 lg:mt-30">
       {/* Mobile (<640px) */}
 
       <div className="sm:hidden">
