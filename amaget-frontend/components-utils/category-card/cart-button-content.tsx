@@ -1,6 +1,7 @@
 import { Check, ShoppingCart } from "lucide-react";
 
 export const CartButtonContent = ({ added }: { added: boolean }) => (
+  
   <span className="relative flex items-center justify-center h-full w-full">
     <span
       className={`flex items-center gap-1.5 transition-all duration-200 ${

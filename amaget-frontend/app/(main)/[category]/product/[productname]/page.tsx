@@ -28,6 +28,7 @@ import { ProductPageError } from "@/components/EachProductPage/erro-states/error
 import { MobileProductSkeleton } from "@/components/EachProductPage/loading-states/mobile-skeleton";
 import { DesktopProductSkeleton } from "@/components/EachProductPage/loading-states/desktop-skeleton";
 import { formatCategoryLabel } from "@/Helper-functions/productPage";
+import { useCart } from "@/components-utils/cart/items-to-cart";
 
 type ProductData = {
   id: number;
@@ -98,8 +99,27 @@ export default function EachProductPage() {
   const [loading, setLoading] = useState(true);
   const [retrycount, setRetrycount] = useState(0);
   const [error, setError] = useState(false);
+  const { cart, addItem, increaseQty, decreaseQty, removeItem, dispatch } =
+    useCart();
 
-  const handleAddToCart = (qty: number) => console.log("add to cart", qty);
+  const handleAddToCart = (qty: number) => {
+    const product = products?.[0];
+    if (!product) return;
+
+    for (let i = 0; i < qty; i++) {
+      const result = addItem({
+        id: String(product.legacy_product_id),
+        name: product.name,
+        price: product.price,
+        image: product.images?.[0],
+      });
+
+      if (result === "max_reached") {
+        // trigger your "contact sales rep" popup here
+        break;
+      }
+    }
+  };
   const resolveParams = useParams<{ productname: string }>();
   const { productname } = resolveParams;
   const ProductId = productname.split("-").pop();
@@ -130,7 +150,6 @@ export default function EachProductPage() {
     fetchProducts();
   }, [legacyProductId, retrycount]);
 
-  console.log("result poducts:", products?.[0]);
   const categoryLabel = formatCategoryLabel(products?.[0]?.cat_name);
 
   const fetchProduct = () => {

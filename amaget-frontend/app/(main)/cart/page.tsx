@@ -3,11 +3,15 @@
 import { CartItemCard } from "@/components/Cart/cartItemCard";
 import { CartItemRow } from "@/components/Cart/cartitemRowDesk";
 import { CartSummary } from "@/components/Cart/cartSummary";
-import { cartItems } from "@/db/cart-mock";
+import { useCart } from "@/components-utils/cart/items-to-cart";
 
 export default function CartPage() {
-  const items = cartItems;
-  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const { cart, increaseQty, decreaseQty, removeItem } = useCart();
+  const items = cart;
+  const subtotal = items.reduce(
+    (sum, i) => sum + Number(i.price) * i.quantity,
+    0,
+  );
 
   if (items.length === 0) {
     return (
@@ -27,7 +31,6 @@ export default function CartPage() {
       {/* Mobile (<640px) */}
 
       <div className="sm:hidden">
-        {/**cart header */}
         <div className="px-4">
           <h1 className="text-lg font-semibold text-foreground">
             Cart{" "}
@@ -37,16 +40,14 @@ export default function CartPage() {
           </h1>
         </div>
 
-        {/** cart item cards */}
-
         <div className="mt-4 flex flex-col gap-3 px-4 mb-2">
           {items.map((item) => (
             <CartItemCard
               key={item.id}
               {...item}
-              onIncrease={() => {}}
-              onDecrease={() => {}}
-              onRemove={() => {}}
+              onIncrease={() => increaseQty(item.id)}
+              onDecrease={() => decreaseQty(item.id)}
+              onRemove={() => removeItem(item.id)}
             />
           ))}
         </div>
@@ -76,9 +77,9 @@ export default function CartPage() {
               <CartItemRow
                 key={item.id}
                 {...item}
-                onIncrease={() => {}}
-                onDecrease={() => {}}
-                onRemove={() => {}}
+                onIncrease={() => increaseQty(item.id)}
+                onDecrease={() => decreaseQty(item.id)}
+                onRemove={() => removeItem(item.id)}
               />
             ))}
           </div>
