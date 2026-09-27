@@ -26,6 +26,7 @@ import {
   MdOutlineArrowRight,
 } from "react-icons/md";
 import { FaCamera, FaServer } from "react-icons/fa";
+import { CategoriesForSidebar } from "@/db/mock";
 
 const HeroImages = [
   {

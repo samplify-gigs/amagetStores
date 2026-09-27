@@ -15,14 +15,23 @@ import { Overlay, SideBar } from "../Sidebar/sidebar";
 import { useDebounce } from "@/Helper-functions/useDebounce";
 import { SearchDropDown } from "./searchDropdown";
 
+type Products = {
+  id: string;
+  name: string;
+};
+
 export function Navbar() {
   const [open, setOpenAction] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const [searchData, setSearchData] = useState([]);
+  const [searchStatus, setSearchStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [searchData, setSearchData] = useState<Products[]>([]);
   const navRef = useRef<HTMLElement>(null);
   const debouncedValue = useDebounce(searchInput, 500);
   const baseUrl = process.env.NEXT_PUBLIC_BASEURL;
 
+  console.log("first search:", searchData);
   const handlesearch = (value: string) => {
     setSearchInput(value);
     console.log("immediate keystroke:", value);
@@ -47,7 +56,9 @@ export function Navbar() {
 
   useEffect(() => {
     if (!debouncedValue.trim()) return;
+    const controller = new AbortController();
     async function fetchSearchedItems() {
+      setSearchStatus("loading");
       try {
         const result = await fetch(
           `${baseUrl}/global-item-search/search-products`,
@@ -57,20 +68,35 @@ export function Navbar() {
               "content-Type": "application/json",
             },
             body: JSON.stringify({ searchQuery: debouncedValue }),
+            signal: controller.signal,
           },
         );
 
+        if (!result.ok) {
+          throw new Error(`Server responded ${result.status}`);
+        }
+
         const data = await result.json();
+        if (!Array.isArray(data)) {
+          throw new Error("Unexpected response shape");
+        }
+
         setSearchData(data);
+        setSearchStatus("success");
       } catch (err) {
+        if ((err as any).name === "AbortError") return;
         console.error("fetching search error:", err);
+        setSearchData([]);
+        setSearchStatus("error");
       }
     }
 
     fetchSearchedItems();
-    console.log("debounced value:", debouncedValue);
-    console.log("fetched searchedData:", searchData);
+    return () => controller.abort();
   }, [debouncedValue, baseUrl]);
+
+  console.log("debounced value:", debouncedValue);
+  console.log("fetched searchedData:", searchData);
 
   return (
     <nav ref={navRef} className="w-full fixed z-50">
@@ -144,10 +170,12 @@ export function Navbar() {
               value={searchInput}
               onChange={(value) => handlesearch(value)}
             />
-            {searchData && (
-              <>
-                <SearchDropDown query={debouncedValue} products={searchData} />
-              </>
+            {debouncedValue.trim() && (
+              <SearchDropDown
+                query={debouncedValue}
+                products={searchData}
+                status={searchStatus}
+              />
             )}
           </div>
         </div>
@@ -171,10 +199,12 @@ export function Navbar() {
               onChange={(value) => handlesearch(value)}
             />
 
-            {searchData && (
-              <>
-                <SearchDropDown query={debouncedValue} products={searchData} />
-              </>
+            {debouncedValue.trim() && (
+              <SearchDropDown
+                query={debouncedValue}
+                products={searchData}
+                status={searchStatus}
+              />
             )}
           </div>
 
@@ -204,8 +234,8 @@ export function Navbar() {
 
           {/* middle side for desktop */}
           <div className="relative flex items-center w-full max-w-3xl shadow-sm shadow-[#e0004c] ">
-            <span className="absolute left-0 right-0 ml-2">
-              <CiSearch size={22} className="text-gray-400 font-semibold" />
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-semibold pointer-events-none">
+              <CiSearch size={22} />
             </span>
             <NavSearch
               value={searchInput}
@@ -226,10 +256,12 @@ export function Navbar() {
               Search
             </div>
 
-            {searchData && (
-              <>
-                <SearchDropDown query={debouncedValue} products={searchData} />
-              </>
+            {debouncedValue.trim() && (
+              <SearchDropDown
+                query={debouncedValue}
+                products={searchData}
+                status={searchStatus}
+              />
             )}
           </div>
 

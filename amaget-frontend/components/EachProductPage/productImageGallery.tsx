@@ -1,6 +1,7 @@
 
 "use client";
 
+import { CldImage } from "next-cloudinary";
 import Image from "next/image";
 import { useRef, useState } from "react";
 
@@ -31,7 +32,7 @@ export function ProductImageGallery({ images, alt }: ProductImageGalleryProps) {
             key={src}
             className="relative h-full w-full flex-shrink-0 snap-center"
           >
-            <Image
+            <CldImage
               src={src}
               alt={`${alt} ${i + 1}`}
               fill

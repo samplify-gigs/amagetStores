@@ -2,6 +2,7 @@ import { LifestyleItems } from "@/db/mock";
 import { ProductCardLifestyle } from "@/components-utils/hompage-carousels/productcardLifestyle";
 import { LifestyleGridSkeleton } from "@/components-utils/hompage-carousels/Lifestylegridskeleton";
 import { SectionErrorOverlay } from "../Error-comps/error-for-home-sections";
+import Link from "next/link";
 
 interface CarouselItems {
   id: string;
@@ -11,6 +12,7 @@ interface CarouselItems {
   price: string;
   url: string;
   categ_name: string;
+  slug:string
 }
 
 type FetchStatus = "loading" | "error" | "success";
@@ -50,11 +52,15 @@ export function Lifestyle({ lifestyle, status, onRetry }: HomepageData) {
                 "
               >
                 <div className="h-full">
-                  <ProductCardLifestyle
-                    src={items.url}
-                    alt={items.name}
-                    price={items.price}
-                  />
+                  <Link
+                    href={`/${items.categ_name}/product/${items.slug}-${items.legacy_product_id}`}
+                  >
+                    <ProductCardLifestyle
+                      src={items.url}
+                      alt={items.name}
+                      price={items.price}
+                    />
+                  </Link>
                 </div>
               </div>
             ))}

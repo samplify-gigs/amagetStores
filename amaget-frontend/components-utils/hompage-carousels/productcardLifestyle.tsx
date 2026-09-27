@@ -3,8 +3,6 @@ import { PriceFormatter } from "@/Helper-functions/price";
 import Link from "next/link";
 import { CldImage } from "next-cloudinary";
 
-
-
 export function ProductCardLifestyle({
   src,
   alt,
@@ -15,8 +13,7 @@ export function ProductCardLifestyle({
   price: string;
 }) {
   return (
-    <Link
-      href="#"
+    <div
       className="
         group flex flex-col bg-secondary cursor-pointer
         border-b border-gray-200 last:border-b-0
@@ -35,8 +32,6 @@ export function ProductCardLifestyle({
         />
       </div>
 
-     
-
       {/* Info */}
       <div className="px-3 py-2.5 flex flex-col gap-0.5 h-[56px] justify-between">
         <p className="text-[12px] sm:text-[13px] leading-snug text-gray-700 font-medium line-clamp-2">
@@ -46,6 +41,6 @@ export function ProductCardLifestyle({
           ₦{PriceFormatter(price)}
         </p>
       </div>
-    </Link>
+    </div>
   );
 }

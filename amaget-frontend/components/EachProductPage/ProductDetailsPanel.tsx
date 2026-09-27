@@ -54,7 +54,7 @@ export function ProductDetailsPanel({
         </div>
       )}
 
-      <StockStatus inStock={inStock} />
+      <StockStatus inStock={inStock} size="lg" />
 
       <div className="mt-6 border-t border-gray-100 pt-6">
         <QuantityAddToCart onAddToCart={onAddToCart} />

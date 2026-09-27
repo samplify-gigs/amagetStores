@@ -13,6 +13,7 @@ interface CarouselItems {
   category_id: string;
   legacy_product_id: string;
   price: string;
+  slug:string
   url: string;
   categ_name: string;
 }
@@ -59,6 +60,7 @@ export default function Home() {
     setStatus("loading");
     setRetryToken((t) => t + 1);
   }, []);
+  console.log("data hotslaes:", data);
 
   return (
     <main>

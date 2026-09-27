@@ -7,7 +7,6 @@ import {
 } from "@/components-utils/carousels-utils/carousel";
 import { ProductCardForUpgrade } from "@/components-utils/hompage-carousels/productcardupgrade";
 import Link from "next/link";
-import { PriceFormatter } from "@/Helper-functions/price";
 import { ProductCardSkeleton } from "@/components-utils/hompage-carousels/productskeletons";
 import { SectionErrorOverlay } from "../Error-comps/error-for-home-sections";
 
@@ -18,6 +17,7 @@ interface CarouselItems {
   legacy_product_id: string;
   price: string;
   url: string;
+  slug: string;
   categ_name: string;
 }
 type FetchStatus = "loading" | "error" | "success";
@@ -28,11 +28,7 @@ interface HomepageData {
   onRetry: () => void;
 }
 
-export default function UpgradePc({
-  upgrade,
-  status,
-  onRetry,
-}: HomepageData) {
+export default function UpgradePc({ upgrade, status, onRetry }: HomepageData) {
   const skeletonCount = 8;
   const showSkeleton = status === "loading" || status === "error";
 
@@ -71,7 +67,9 @@ export default function UpgradePc({
                   key={items.id}
                   className="pl-3 basis-[42%] sm:basis-1/3 md:basis-1/4"
                 >
-                  <Link href={`/${items.categ_name}/${items.id}`}>
+                  <Link
+                    href={`/${items.categ_name}/product/${items.slug}-${items.legacy_product_id}`}
+                  >
                     <ProductCardForUpgrade
                       src={items.url}
                       alt={items.name}
@@ -97,12 +95,16 @@ export default function UpgradePc({
               <ProductCardSkeleton key={i} />
             ))
           : upgrade.map((items) => (
-              <ProductCardForUpgrade
+              <Link
                 key={items.id}
-                src={items.url}
-                alt={items.name}
-                price={items.price}
-              />
+                href={`/${items.categ_name}/product/${items.slug}-${items.legacy_product_id}`}
+              >
+                <ProductCardForUpgrade
+                  src={items.url}
+                  alt={items.name}
+                  price={items.price}
+                />
+              </Link>
             ))}
 
         {status === "error" && <SectionErrorOverlay onRetry={onRetry} />}

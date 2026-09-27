@@ -6,9 +6,7 @@ import {
   CarouselPrevious,
 } from "../../components-utils/carousels-utils/carousel";
 import { CategoryCard } from "@/components-utils/hompage-carousels/categorycard";
-import { Categories } from "@/db/mock";
-
-
+import { Categories, CategoriesForSidebar } from "@/db/mock";
 
 export default function BrowseCategorySection() {
   return (
@@ -31,7 +29,7 @@ export default function BrowseCategorySection() {
           className="w-full"
         >
           <CarouselContent className="-ml-2">
-            {Categories.map(({ icon, label, href }) => (
+            {CategoriesForSidebar.map(({ icon, label, href }) => (
               <CarouselItem
                 key={label}
                 className="pl-2 basis-1/3 sm:basis-1/4 md:basis-1/5"

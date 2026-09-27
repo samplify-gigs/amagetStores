@@ -118,7 +118,7 @@ export default function CategoryPage() {
                 {CategoriesForSidebar.map((c) => (
                   <li key={c.label}>
                     <Link
-                      href="#"
+                      href={c.href}
                       className="flex items-center justify-between text-[13px] py-1.5 px-2 rounded-l font-semibold text-gray-400 hover:bg-gray-50"
                     >
                       {c.label}

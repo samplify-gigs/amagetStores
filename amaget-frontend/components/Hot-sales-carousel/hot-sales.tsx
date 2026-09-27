@@ -18,6 +18,7 @@ interface CarouselItems {
   price: string;
   url: string;
   categ_name: string;
+  slug: string;
 }
 
 interface HomepageData {
@@ -75,7 +76,7 @@ export function HotSales({
                   className="pl-3 basis-[42%] sm:basis-1/3 md:basis-1/4"
                 >
                   <Link
-                    href={`/${items.categ_name}/${items.legacy_product_id}`}
+                    href={`/${items.categ_name}/product/${items.slug}-${items.legacy_product_id}`}
                   >
                     <ProductCard
                       src={items.url}
@@ -99,12 +100,16 @@ export function HotSales({
               <ProductCardSkeleton key={i} />
             ))
           : hotsales.map((items) => (
-              <ProductCard
+              <Link
                 key={items.id}
-                src={items.url}
-                alt={items.name}
-                price={items.price}
-              />
+                href={`/${items.categ_name}/product/${items.slug}-${items.legacy_product_id}`}
+              >
+                <ProductCard
+                  src={items.url}
+                  alt={items.name}
+                  price={items.price}
+                />
+              </Link>
             ))}
         {status === "error" && <SectionErrorOverlay onRetry={onRetry} />}
       </div>

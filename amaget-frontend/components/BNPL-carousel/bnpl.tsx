@@ -3,6 +3,7 @@ import Image from "next/image";
 import { LifestyleItems } from "@/db/mock";
 import { LifestyleGridSkeleton } from "@/components-utils/hompage-carousels/Lifestylegridskeleton";
 import { SectionErrorOverlay } from "../Error-comps/error-for-home-sections";
+import Link from "next/link";
 
 interface CarouselItems {
   id: string;
@@ -12,6 +13,7 @@ interface CarouselItems {
   price: string;
   url: string;
   categ_name: string;
+  slug: string;
 }
 type FetchStatus = "loading" | "error" | "success";
 interface HomepageData {
@@ -59,11 +61,15 @@ export function BNPL({ bnpl, status, onRetry }: HomepageData) {
                 "
               >
                 <div className="h-full">
-                  <ProductCardLifestyle
-                    src={items.url}
-                    alt={items.name}
-                    price={items.price}
-                  />
+                  <Link
+                    href={`/${items.categ_name}/product/${items.slug}-${items.legacy_product_id}`}
+                  >
+                    <ProductCardLifestyle
+                      src={items.url}
+                      alt={items.name}
+                      price={items.price}
+                    />
+                  </Link>
                 </div>
               </div>
             ))}

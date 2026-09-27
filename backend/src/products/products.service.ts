@@ -28,7 +28,7 @@ export class ProductsService {
 
   async fetchProductDetails(@Body() body: ProductsPagesDto) {
     const { legacyProductId } = body;
-
+    console.log(typeof legacyProductId);
     try {
       const query = `SELECT
     p.id,

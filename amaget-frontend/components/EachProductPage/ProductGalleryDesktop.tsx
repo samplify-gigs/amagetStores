@@ -1,8 +1,14 @@
 "use client";
 
+import { CldImage } from "next-cloudinary";
 import Image from "next/image";
 import { useState } from "react";
-import { IoChevronBack, IoChevronForward, IoHeart, IoHeartOutline } from "react-icons/io5";
+import {
+  IoChevronBack,
+  IoChevronForward,
+  IoHeart,
+  IoHeartOutline,
+} from "react-icons/io5";
 
 interface ProductGalleryDesktopProps {
   images: string[];
@@ -10,12 +16,17 @@ interface ProductGalleryDesktopProps {
   discountPercent?: number;
 }
 
-export function ProductGalleryDesktop({ images, alt, discountPercent }: ProductGalleryDesktopProps) {
+export function ProductGalleryDesktop({
+  images,
+  alt,
+  discountPercent,
+}: ProductGalleryDesktopProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [wishlisted, setWishlisted] = useState(false);
 
   const showThumbnails = images.length > 1;
-  const goTo = (i: number) => setActiveIndex((i + images.length) % images.length);
+  const goTo = (i: number) =>
+    setActiveIndex((i + images.length) % images.length);
 
   return (
     <div className="rounded bg-gray-50 p-2 bg-secondary mt-1 max-w-[480px] mx-auto lg:mx-0">
@@ -31,10 +42,14 @@ export function ProductGalleryDesktop({ images, alt, discountPercent }: ProductG
           className="absolute right-3 top-3 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white text-gray-700 shadow-sm"
           aria-label="Toggle wishlist"
         >
-          {wishlisted ? <IoHeart className="h-4 w-4 text-primary" /> : <IoHeartOutline className="h-4 w-4" />}
+          {wishlisted ? (
+            <IoHeart className="h-4 w-4 text-primary" />
+          ) : (
+            <IoHeartOutline className="h-4 w-4" />
+          )}
         </button>
 
-        <Image
+        <CldImage
           key={images[activeIndex]}
           src={images[activeIndex]}
           alt={`${alt} ${activeIndex + 1}`}
@@ -77,7 +92,12 @@ export function ProductGalleryDesktop({ images, alt, discountPercent }: ProductG
                   aria-label={`View image ${i + 1}`}
                 >
                   <div className="relative h-full w-full">
-                    <Image src={src} alt={`${alt} thumbnail ${i + 1}`} fill className="object-contain p-1" />
+                    <Image
+                      src={src}
+                      alt={`${alt} thumbnail ${i + 1}`}
+                      fill
+                      className="object-contain p-1"
+                    />
                   </div>
                 </button>
               ))}
