@@ -8,6 +8,7 @@ import { GlobalItemSearchModule } from './global-item-search/global-item-search.
 import { NodeCronModule } from './node_cron/node_cron.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ProductsModule } from './products/products.module';
+import { OrdersDeliveryModule } from './orders-delivery/orders-delivery.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ProductsModule } from './products/products.module';
     GlobalItemSearchModule,
     NodeCronModule,
     ProductsModule,
+    OrdersDeliveryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

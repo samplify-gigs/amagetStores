@@ -12,6 +12,7 @@ type newProductsProps = {
   name: string;
   price: number;
   legacy_product_id: number;
+  slug: string;
   category_id: number;
 };
 
@@ -36,18 +37,18 @@ export class NodeCronService {
 
     try {
       this.logger.log('fetching 8 hotsales products for the day');
-      const fetchHotsalesQuery = ` select id , name, price, legacy_product_id, category_id 
+      const fetchHotsalesQuery = ` select id , name, price, legacy_product_id, category_id , slug
       from new_products order by random() limit 8
       `;
-      const fetchUpgradePc = ` select id , name, price, legacy_product_id, category_id 
+      const fetchUpgradePc = ` select id , name, price, legacy_product_id, category_id , slug
       from new_products where category_id = $1 or category_id = $2 order by random() limit 8;
       `;
 
-      const fetchBNPL = ` select id , name, price, legacy_product_id, category_id 
+      const fetchBNPL = ` select id , name, price, legacy_product_id, category_id , slug
       from new_products order by random() limit 8
       `;
 
-      const fetchLifestyle = ` select id , name, price, legacy_product_id, category_id 
+      const fetchLifestyle = ` select id , name, price, legacy_product_id, category_id , slug
       from new_products where category_id = $1 order by random() limit 8;
       `;
 
@@ -66,7 +67,7 @@ export class NodeCronService {
       await client.query('BEGIN');
       await client.query('DELETE FROM new_daily_products');
       const insertQuery =
-        'insert into new_daily_products (id,name,price,legacy_product_id,category_id,slot,section) values($1,$2,$3,$4,$5,$6,$7)';
+        'insert into new_daily_products (id,name,price,legacy_product_id,category_id,slug,slot,section) values($1,$2,$3,$4,$5,$6,$7,$8)';
 
       const insertItems = async (
         products: newProductsProps[],
@@ -80,6 +81,7 @@ export class NodeCronService {
             eachProduct.price,
             eachProduct.legacy_product_id,
             eachProduct.category_id,
+            eachProduct.slug,
             i + 1,
             section,
           ]);
@@ -106,7 +108,7 @@ export class NodeCronService {
   async getHotSalesLiveProducts() {
     try {
       const query = `select new_daily_products.id,new_daily_products.price,new_daily_products.name,new_daily_products.legacy_product_id,
-    new_daily_products.category_id,new_categories.slug as categ_name, url from new_daily_products 
+    new_daily_products.category_id,new_daily_products.slug,new_categories.slug as categ_name, url from new_daily_products 
     LEFT JOIN new_categories on new_daily_products.category_id = new_categories.id 
     left join lateral ( select url from new_images where product_id = new_daily_products.id limit 1) img on true 
     where new_daily_products.section = $1 limit 8
@@ -128,7 +130,7 @@ export class NodeCronService {
   async getUpgradePcProducts() {
     try {
       const query = `select new_daily_products.id,new_daily_products.price,new_daily_products.name,new_daily_products.legacy_product_id,
-    new_daily_products.category_id,new_categories.slug as categ_name, url from new_daily_products 
+    new_daily_products.category_id,new_daily_products.slug,new_categories.slug as categ_name, url from new_daily_products 
     LEFT JOIN new_categories on new_daily_products.category_id = new_categories.id 
     left join lateral ( select url from new_images where product_id = new_daily_products.id limit 1) img on true 
 	where new_daily_products.section = $1 limit 8
@@ -150,7 +152,7 @@ export class NodeCronService {
   async getBnplProducts() {
     try {
       const query = `select new_daily_products.id,new_daily_products.price,new_daily_products.name,new_daily_products.legacy_product_id,
-    new_daily_products.category_id,new_categories.slug as categ_name, url from new_daily_products 
+    new_daily_products.category_id,new_daily_products.slug,new_categories.slug as categ_name, url from new_daily_products 
     LEFT JOIN new_categories on new_daily_products.category_id = new_categories.id 
     left join lateral ( select url from new_images where product_id = new_daily_products.id limit 1) img on true 
 	where new_daily_products.section = $1 limit 8
@@ -170,7 +172,7 @@ export class NodeCronService {
   async getLifestyleProducts() {
     try {
       const query = `select new_daily_products.id,new_daily_products.price,new_daily_products.name,new_daily_products.legacy_product_id,
-    new_daily_products.category_id,new_categories.slug as categ_name, url from new_daily_products 
+    new_daily_products.category_id,new_daily_products.slug,new_categories.slug as categ_name, url from new_daily_products 
     LEFT JOIN new_categories on new_daily_products.category_id = new_categories.id 
     left join lateral ( select url from new_images where product_id = new_daily_products.id limit 1) img on true 
 	where new_daily_products.section = $1 limit 8

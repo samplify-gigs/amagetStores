@@ -23,12 +23,12 @@ type ProductProps = {
 @Injectable()
 export class ProductsService {
   constructor(@Inject('PG_POOL') private readonly db: Pool) {
-    console.log('play me by dumebi');
+    
   }
 
   async fetchProductDetails(@Body() body: ProductsPagesDto) {
     const { legacyProductId } = body;
-    console.log(typeof legacyProductId);
+    
     try {
       const query = `SELECT
     p.id,
