@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from "react";
 import { Overlay, SideBar } from "../Sidebar/sidebar";
 import { useDebounce } from "@/Helper-functions/useDebounce";
 import { SearchDropDown } from "./searchDropdown";
+import { useCart } from "@/components-utils/cart/items-to-cart";
 
 type Products = {
   id: string;
@@ -29,12 +30,12 @@ export function Navbar() {
   const [searchData, setSearchData] = useState<Products[]>([]);
   const navRef = useRef<HTMLElement>(null);
   const debouncedValue = useDebounce(searchInput, 500);
+  const { cart, loading } = useCart();
   const baseUrl = process.env.NEXT_PUBLIC_BASEURL;
+  const items = cart;
 
-  console.log("first search:", searchData);
   const handlesearch = (value: string) => {
     setSearchInput(value);
-    console.log("immediate keystroke:", value);
   };
   useEffect(() => {
     const el = navRef.current;
@@ -154,8 +155,8 @@ export function Navbar() {
                 className="cursor-pointer text-secondary"
               />
 
-              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                4
+              <span className="absolute top-0 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                {loading ? "" : items.length}
               </span>
             </Link>
           </div>
@@ -212,10 +213,14 @@ export function Navbar() {
 
           <div className="flex items-center gap-1 flex-shrink-0">
             <UserIcon />
-            <Link href="/cart">
+            <Link href="/cart" className="relative">
               <button className="p-2 rounded-lg hover:bg-white/15 active:bg-white/25 transition-colors cursor-pointer">
                 <IoCartOutline size={22} />
               </button>
+
+              <span className="absolute top-0 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                {loading ? "" : items.length}
+              </span>
             </Link>
           </div>
         </div>
@@ -273,10 +278,13 @@ export function Navbar() {
               <UserIcon className="text-secondary/90" />
             </div>
 
-            <Link href="/cart">
+            <Link href="/cart" className="relative">
               <button className="p-2 rounded-lg hover:bg-white/15 active:bg-white/25 transition-colors mr-4np cursor-pointer">
                 <IoCartOutline size={22} className="text-secondary/90" />
               </button>
+              <span className="absolute top-0 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                {loading ? "" : items.length}
+              </span>
             </Link>
           </div>
         </div>

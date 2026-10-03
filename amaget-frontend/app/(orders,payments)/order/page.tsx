@@ -38,7 +38,7 @@ export default function DeliveryPaymentPage() {
   const BaseUrl = process.env.NEXT_PUBLIC_BASEURL;
 
   const fetchDeliveryItems = useCallback(async () => {
-    setStatus("loading");
+    
     try {
       const result = await fetch(`${BaseUrl}/orders-delivery`);
       if (!result.ok) throw new Error(`Request failed with ${result.status}`);

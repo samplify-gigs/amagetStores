@@ -12,7 +12,7 @@ import React from "react";
 import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
 import { TfiMobile } from "react-icons/tfi";
-import { IoIosLaptop, IoIosDesktop, IoIosArrowDropright } from "react-icons/io";
+import { IoIosLaptop, IoIosDesktop } from "react-icons/io";
 import { IoGameController } from "react-icons/io5";
 import { LuPrinter, LuCctv } from "react-icons/lu";
 import { IoMdDesktop } from "react-icons/io";
@@ -26,7 +26,7 @@ import {
   MdOutlineArrowRight,
 } from "react-icons/md";
 import { FaCamera, FaServer } from "react-icons/fa";
-import { CategoriesForSidebar } from "@/db/mock";
+
 
 const HeroImages = [
   {
@@ -113,7 +113,7 @@ export function HeroCarousel() {
           align: "start",
           loop: true,
         }}
-        className="w-full lg:hidden rounded-2xl overflow-hidden"
+        className="w-full lg:hidden rounded-2xl overflow-hidden mt-2"
         onMouseEnter={mobilePlugin.stop}
         onMouseLeave={mobilePlugin.reset}
       >

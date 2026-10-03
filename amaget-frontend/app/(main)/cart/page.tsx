@@ -4,15 +4,56 @@ import { CartItemCard } from "@/components/Cart/cartItemCard";
 import { CartItemRow } from "@/components/Cart/cartitemRowDesk";
 import { CartSummary } from "@/components/Cart/cartSummary";
 import { useCart } from "@/components-utils/cart/items-to-cart";
+import { IoAlertCircleOutline } from "react-icons/io5";
 
 export default function CartPage() {
-  const { cart, increaseQty, decreaseQty, removeItem } = useCart();
+  const {
+    cart,
+    increaseQty,
+    decreaseQty,
+    removeItem,
+    loading,
+    error,
+    resetCart,
+  } = useCart();
   const items = cart;
   const subtotal = items.reduce(
     (sum, i) => sum + Number(i.price) * i.quantity,
     0,
   );
 
+  // ---------- Loading ----------
+  if (loading) {
+    return (
+      <main className="flex min-h-[60vh] flex-col items-center justify-center gap-3 px-6 text-center">
+        <span className="h-8 w-8 animate-spin rounded-full border-2 border-border/20 border-t-primary" />
+        <p className="text-sm text-foreground/45">Loading your cart…</p>
+      </main>
+    );
+  }
+
+  // ---------- Error ----------
+  if (error) {
+    return (
+      <main className="flex min-h-[60vh] flex-col items-center justify-center gap-3 px-6 text-center">
+        <IoAlertCircleOutline className="h-8 w-8 text-foreground/30" />
+        <div>
+          <p className="text-sm font-medium text-foreground">
+            Couldn&apos;t load your cart
+          </p>
+          <p className="mt-1 text-sm text-foreground/45">{error}</p>
+        </div>
+        <button
+          onClick={resetCart}
+          className="mt-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-secondary transition-transform active:scale-[0.98]"
+        >
+          Reset cart
+        </button>
+      </main>
+    );
+  }
+
+  // ---------- Empty ----------
   if (items.length === 0) {
     return (
       <main className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center mt-29">

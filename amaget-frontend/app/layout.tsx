@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { inter, lusitana } from "@/fonts";
-import { Navbar } from "@/components/Navigation/NavBar";
 import "./globals.css";
 import { FooterSec } from "@/components/Footer/footer";
 import { CartProvider } from "@/components-utils/cart/items-to-cart";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "amaget stores",
@@ -18,11 +17,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", inter.className, lusitana.className, "font-sans", geist.variable)}
+      className={cn(
+        "h-full",
+        "antialiased",
+        inter.className,
+        lusitana.className,
+        "font-sans",
+        geist.variable,
+      )}
     >
       <body className="">
-        <main>{children}</main>
-        <FooterSec/>
+        <CartProvider>
+          <main>{children}</main>
+          <FooterSec />
+        </CartProvider>
       </body>
     </html>
   );

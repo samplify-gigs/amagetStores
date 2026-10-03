@@ -37,6 +37,9 @@ interface CartContextValue {
   increaseQty: (id: string) => AddItemResult;
   decreaseQty: (id: string) => void;
   removeItem: (id: string) => void;
+  loading: boolean;
+  error: string | null;
+  resetCart: () => void;
   dispatch: React.Dispatch<CartAction>;
 }
 
@@ -105,6 +108,7 @@ const initialState: CartState = [];
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, dispatch] = useReducer(cartReducer, initialState);
   const [hydrated, setHydrated] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -117,6 +121,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
     } catch (err) {
       console.error("Failed to read cart from localStorage:", err);
+      setError("We couldn't load your saved cart.");
     } finally {
       setHydrated(true);
     }
@@ -130,6 +135,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
       console.error("Failed to save cart to localStorage:", err);
     }
   }, [cart, hydrated]);
+
+  const resetCart = () => {
+    try {
+      localStorage.removeItem(CART_STORAGE_KEY);
+    } catch {
+      // ignore — nothing to clean up
+    }
+    dispatch({ type: "SET_CART", payload: [] });
+    setError(null);
+  };
 
   useEffect(() => {
     if (!hydrated) return;
@@ -169,7 +184,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ cart, addItem, increaseQty, decreaseQty, removeItem, dispatch }}
+      value={{
+        cart,
+        addItem,
+        increaseQty,
+        decreaseQty,
+        removeItem,
+        loading: !hydrated,
+        error,
+        resetCart,
+        dispatch,
+      }}
     >
       {children}
     </CartContext.Provider>
