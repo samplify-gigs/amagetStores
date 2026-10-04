@@ -1,5 +1,6 @@
 "use client";
 
+import { useCart } from "@/components-utils/cart/items-to-cart";
 import { DeliveryStep } from "@/components/order/delivery-step";
 import { LocationStep } from "@/components/order/location-step";
 import { MobileTotalBar } from "@/components/order/mobile-top-bar";
@@ -35,10 +36,23 @@ export default function DeliveryPaymentPage() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodId | null>(
     null,
   );
+  const { cart } = useCart();
+  const CartItemms = cart[0];
+  const userId = "amg4673user100";
+
+  useEffect(() => {
+    async function FetchUserValidatedDetails() {
+      try {
+        
+      } catch (err) {
+        console.log("failed to fetch and validate user details error is:", err);
+      }
+    }
+  });
+
   const BaseUrl = process.env.NEXT_PUBLIC_BASEURL;
 
   const fetchDeliveryItems = useCallback(async () => {
-    
     try {
       const result = await fetch(`${BaseUrl}/orders-delivery`);
       if (!result.ok) throw new Error(`Request failed with ${result.status}`);

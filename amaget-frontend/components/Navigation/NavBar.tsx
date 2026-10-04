@@ -96,9 +96,7 @@ export function Navbar() {
     return () => controller.abort();
   }, [debouncedValue, baseUrl]);
 
-  console.log("debounced value:", debouncedValue);
-  console.log("fetched searchedData:", searchData);
-
+ 
   return (
     <nav ref={navRef} className="w-full fixed z-50">
       {/** top bar for lg */}

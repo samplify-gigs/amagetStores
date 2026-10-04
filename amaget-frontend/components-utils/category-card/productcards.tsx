@@ -7,13 +7,14 @@ import { Rating } from "../category-product-pages/ratings";
 import { PriceFormatter } from "@/Helper-functions/price";
 import { CartButtonContent } from "./cart-button-content";
 import Link from "next/link";
+import { useCart } from "../cart/items-to-cart";
 
 type CategProdProps = {
   id: string;
   legacy_product_id: string;
   name: string;
   slug: string;
-  price: string;
+  price: number;
   total_count: string;
   url: string;
 };
@@ -26,15 +27,31 @@ type itemProps = {
 export function ProductCard({ p, category }: itemProps) {
   const [fav, setFav] = useState(false);
   const [added, setAdded] = useState(false);
+  const { addItem } = useCart();
   const discount = 55;
   const cleanProductName = p.slug
     ? p.slug.trim().toLowerCase().replace(/\s+/g, "-").replace(/-+/g, "-")
     : "";
   const slug = `${cleanProductName}-${p.legacy_product_id}`;
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (qty: number) => {
     if (added) return;
     setAdded(true);
+    const product = p;
+    if (!product) return;
+    for (let i = 0; i < qty; i++) {
+      const result = addItem({
+        id: String(p.legacy_product_id),
+        name: p.name,
+        price: p.price,
+        image: p.url,
+      });
+
+      if (result === "max_reached") {
+        // trigger "contact sales rep" popup here
+        break;
+      }
+    }
 
     window.setTimeout(() => setAdded(false), 1800);
   };
@@ -87,7 +104,7 @@ export function ProductCard({ p, category }: itemProps) {
 
         {/* Mobile/tablet-only: always visible pill */}
         <button
-          onClick={handleAddToCart}
+          onClick={() => handleAddToCart(1)}
           disabled={added}
           aria-label={added ? "Added to cart" : "Add to cart"}
           className={`
@@ -104,7 +121,7 @@ export function ProductCard({ p, category }: itemProps) {
 
         {/* Desktop-only: hidden until hover, floats over the image */}
         <button
-          onClick={handleAddToCart}
+          onClick={() => handleAddToCart(1)}
           disabled={added}
           aria-label={added ? "Added to cart" : "Add to cart"}
           className={`

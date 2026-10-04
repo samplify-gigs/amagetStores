@@ -26,10 +26,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         geist.variable,
       )}
     >
-      <body className="">
+      <body className="flex min-h-screen flex-col">
         <CartProvider>
-          <main>{children}</main>
-          <FooterSec />
+          <main className="flex flex-1 flex-col">{children}</main>
         </CartProvider>
       </body>
     </html>

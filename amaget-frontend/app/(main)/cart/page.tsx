@@ -5,8 +5,10 @@ import { CartItemRow } from "@/components/Cart/cartitemRowDesk";
 import { CartSummary } from "@/components/Cart/cartSummary";
 import { useCart } from "@/components-utils/cart/items-to-cart";
 import { IoAlertCircleOutline } from "react-icons/io5";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
+  const router = useRouter();
   const {
     cart,
     increaseQty,
@@ -21,6 +23,10 @@ export default function CartPage() {
     (sum, i) => sum + Number(i.price) * i.quantity,
     0,
   );
+
+  function gotoCheckout() {
+    router.push("/checkout");
+  }
 
   // ---------- Loading ----------
   if (loading) {
@@ -56,7 +62,7 @@ export default function CartPage() {
   // ---------- Empty ----------
   if (items.length === 0) {
     return (
-      <main className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center mt-29">
+      <main className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
         <p className="text-base font-medium text-foreground">
           Your cart is empty
         </p>
@@ -68,11 +74,11 @@ export default function CartPage() {
   }
 
   return (
-    <main className="pb-2 sm:pb-10 sm:mt-18 md:mt-24">
+    <main className="pb-2">
       {/* Mobile (<640px) */}
 
-      <div className="sm:hidden">
-        <div className="px-4">
+      <div className="sm:hidden ">
+        <div className="px-4 mt-4">
           <h1 className="text-lg font-semibold text-foreground">
             Cart{" "}
             <span className="font-normal text-foreground/45">
@@ -97,7 +103,7 @@ export default function CartPage() {
         <CartSummary
           itemCount={items.length}
           subtotal={subtotal}
-          onCheckout={() => {}}
+          onCheckout={gotoCheckout}
           variant="bar"
         />
       </div>

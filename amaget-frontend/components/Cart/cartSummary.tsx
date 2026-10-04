@@ -1,3 +1,5 @@
+import { PriceFormatter } from "@/Helper-functions/price";
+
 interface CartSummaryProps {
   itemCount: number;
   subtotal: number;
@@ -23,12 +25,12 @@ export function CartSummary({
             </p>
             <p className="text-base font-semibold text-foreground">
               {currency}
-              {subtotal.toLocaleString()}
+              {PriceFormatter(subtotal)}
             </p>
           </div>
           <button
             onClick={onCheckout}
-            className="flex-1 max-w-[220px] rounded-full bg-primary py-3 text-sm font-medium text-secondary transition-opacity hover:opacity-90"
+            className="flex-1 max-w-[220px] rounded-full bg-primary py-3 text-sm font-medium text-secondary transition-opacity hover:opacity-90 transition-transfrom active:scale-95 duration-200 ease-out"
           >
             Checkout
           </button>
@@ -59,13 +61,13 @@ export function CartSummary({
         <span className="text-sm text-foreground/60">Total</span>
         <span className="text-xl font-semibold text-foreground">
           {currency}
-          {subtotal.toLocaleString()}
+          {PriceFormatter(subtotal)}
         </span>
       </div>
 
       <button
         onClick={onCheckout}
-        className="mt-5 w-full rounded-full bg-primary py-3.5 text-sm font-medium text-secondary transition-opacity hover:opacity-90"
+        className="mt-5 w-full rounded-full bg-primary py-3.5 text-sm font-medium text-secondary transition-opacity hover:opacity-80 transition-transfrom active:scale-95 "
       >
         Checkout
       </button>

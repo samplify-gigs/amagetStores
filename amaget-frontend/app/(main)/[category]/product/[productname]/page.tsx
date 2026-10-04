@@ -99,7 +99,7 @@ export default function EachProductPage() {
   const [loading, setLoading] = useState(true);
   const [retrycount, setRetrycount] = useState(0);
   const [error, setError] = useState(false);
-  const { cart, addItem, increaseQty, decreaseQty, removeItem, dispatch } =
+  const {  addItem } =
     useCart();
 
   const handleAddToCart = (qty: number) => {

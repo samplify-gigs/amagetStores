@@ -1,8 +1,8 @@
 "use client";
 
+import { CheckoutHeader } from "@/components/checkout/checkout-header";
 import { MobileTotalBar } from "@/components/checkout/mobile-totalbar";
 import { OrderSummaryList } from "@/components/checkout/ordersummary";
-import { PaymentMethodPicker } from "@/components/checkout/payment-method";
 import { ShippingForm } from "@/components/checkout/shippingForm";
 import { useState } from "react";
 import { IoLockClosedOutline } from "react-icons/io5";
@@ -84,17 +84,19 @@ export default function CheckoutPage() {
   };
 
   return (
-    <main className="h-full">
+    <div className="flex flex-1 flex-col">
+      <CheckoutHeader />
+
       {/* Mobile (<640px) */}
-      <div className="sm:hidden ">
+      <div className="flex-1 sm:hidden">
         {/** checkout header */}
-        <div className="px-4 pt-2">
-          <h1 className="text-lg font-semibold text-foreground">
+        <div className="px-4 pt-4">
+          <h2 className="text-lg font-semibold text-foreground">
             Checkout{" "}
             <span className="font-normal text-foreground/45">
               {items.length} {items.length === 1 ? "item" : "items"}
             </span>
-          </h1>
+          </h2>
         </div>
 
         <OrderSummaryList items={items} className="mt-4 px-4" />
@@ -102,53 +104,36 @@ export default function CheckoutPage() {
         <div className="mt-6 px-4">
           <ShippingForm details={details} onChange={handleChange} />
         </div>
-        {/*
-        <div className="mt-6 px-4">
-          <PaymentMethodPicker value={paymentMethod} onChange={setPaymentMethod} />
-        </div>*/}
 
         <MobileTotalBar total={total} onPlaceOrder={handlePlaceOrder} />
-        
       </div>
 
       {/* sm and up */}
-      <div className="mx-auto hidden max-w-2xl px-6 sm:block lg:max-w-5xl lg:px-8 xl:max-w-6xl 2xl:max-w-7xl">
-        <h1 className="mt-2 text-2xl font-semibold text-foreground">
+      <div className="mx-auto hidden w-full max-w-2xl flex-1 px-6 sm:block lg:max-w-5xl lg:px-8 xl:max-w-6xl 2xl:max-w-7xl">
+        <h2 className="mt-4 text-2xl font-semibold text-foreground">
           Checkout{" "}
           <span className="font-normal text-foreground/45">
             {items.length} {items.length === 1 ? "item" : "items"}
           </span>
-        </h1>
+        </h2>
 
         <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_380px] xl:gap-12 mb-2">
           <div className="min-w-0 space-y-8">
             <section className="rounded-2xl border border-border/15 bg-card p-6 lg:p-8">
-              <h2 className="text-sm font-semibold text-foreground">
+              <h3 className="text-sm font-semibold text-foreground">
                 Shipping details
-              </h2>
+              </h3>
               <div className="mt-5">
                 <ShippingForm details={details} onChange={handleChange} />
               </div>
             </section>
-
-            {/*<section className="rounded-2xl border border-border/15 bg-card p-6 lg:p-8">
-              <h2 className="text-sm font-semibold text-foreground">
-                Payment method
-              </h2>
-              <div className="mt-5">
-                <PaymentMethodPicker
-                  value={paymentMethod}
-                  onChange={setPaymentMethod}
-                />
-              </div>
-            </section>*/}
           </div>
 
           <div className="lg:sticky lg:top-24 lg:self-start mb-2">
             <div className="rounded-2xl border border-border/15 bg-card p-6">
-              <h2 className="text-sm font-semibold text-foreground">
+              <h3 className="text-sm font-semibold text-foreground">
                 Order summary
-              </h2>
+              </h3>
               <OrderSummaryList items={items} className="mt-4" compact />
 
               <div className="mt-5 space-y-2 border-t border-border/15 pt-4 text-sm">
@@ -180,6 +165,6 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

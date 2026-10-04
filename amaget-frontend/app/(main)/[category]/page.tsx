@@ -68,7 +68,7 @@ export default function CategoryPage() {
         });
 
         const res = await result.json();
-        console.log("categ products:", res.categoryProducts);
+
         setCategProducts(res.categoryProducts);
       } catch (err) {
         console.error("fetch category products failed:", err);
@@ -79,6 +79,7 @@ export default function CategoryPage() {
 
     fetchCategproducts();
   }, [offset, urlHome]);
+
   if (!(cleanCategory in allowedCategories)) {
     return (
       <>
@@ -86,6 +87,7 @@ export default function CategoryPage() {
       </>
     );
   }
+
   return (
     <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans">
       {/* HEADER  */}
@@ -179,11 +181,13 @@ export default function CategoryPage() {
         {/* ---- Main content ---- */}
         <main className="flex-1 w-full">
           {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <ProductSkeleton key={i} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <ProductSkeleton key={i} />
+                ))}
+              </div>
+            </>
           ) : categProducts?.length === 0 ? (
             <EmptyState />
           ) : (

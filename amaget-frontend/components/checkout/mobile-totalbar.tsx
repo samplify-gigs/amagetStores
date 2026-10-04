@@ -8,7 +8,7 @@ export function MobileTotalBar({
   onPlaceOrder: () => void;
 }) {
   return (
-    <div className="sticky inset-x-0 bottom-0 z-40 border-t border-border/15 bg-secondary px-4 py-3">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/15 bg-secondary px-4 py-3">
       <div className="mx-auto flex max-w-[420px] items-center gap-3">
         <div className="min-w-0">
           <p className="text-[11px] text-foreground/45">Total</p>
@@ -27,4 +27,3 @@ export function MobileTotalBar({
     </div>
   );
 }
- 

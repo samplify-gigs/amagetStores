@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { IoTrashOutline } from "react-icons/io5";
 import { QuantityStepper } from "./quantityStepper";
+import { PriceFormatter } from "@/Helper-functions/price";
 
 interface CartItemCardProps {
   image: string;
@@ -64,7 +65,7 @@ export function CartItemCard({
           <div className="flex items-baseline gap-1.5">
             <span className="text-sm font-semibold text-foreground">
               {currency}
-              {price.toLocaleString()}
+              {PriceFormatter(price)}
             </span>
           </div>
           <QuantityStepper

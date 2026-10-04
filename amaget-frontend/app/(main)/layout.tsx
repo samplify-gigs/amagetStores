@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+
 import { Navbar } from "@/components/Navigation/NavBar";
 import "../globals.css";
 import { FooterSec } from "@/components/Footer/footer";
