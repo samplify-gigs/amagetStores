@@ -12,8 +12,10 @@ type CartIDProps = {
   id: number;
 };
 
-type PriceProps = {
+type ProductDataProps = {
+  name: string;
   price: number;
+  url: string;
 };
 
 @Injectable()
@@ -54,12 +56,15 @@ export class CartValidationService {
       }
 
       let totalItemPrice = 0;
+      const productData: ProductDataProps[] = [];
       // looping throught items to get each products price
       for (const item of items) {
-        const productResult = await client.query<PriceProps>(
-          `SELECT price
-         FROM new_products
-         WHERE legacy_product_id = $1`,
+        const productResult = await client.query<ProductDataProps>(
+          `SELECT p.name, p.price,url
+         FROM new_products as p
+         INNER JOIN new_images img on img.product_id = p.id
+         WHERE legacy_product_id = $1
+         limit 1`,
           [item.productId],
         );
 
@@ -68,19 +73,19 @@ export class CartValidationService {
           throw new NotFoundException('Product not found');
         }
 
+        productData.push(productResult.rows[0]);
         const productPrice = Number(productResult.rows[0].price);
-        const priceInNaira = productPrice * 1400;
 
         // Calculate total
-        const totalPrice = priceInNaira * item.quantity;
-        totalItemPrice += totalPrice;
-
-       
+        const totalPrice = productPrice * item.quantity;
+        const totalPriceINaira = totalPrice * 1400;
+        totalItemPrice += totalPriceINaira;
       }
-
+      
       await client.query('COMMIT');
       return {
         totalItemPrice,
+        productData,
       };
     } catch (err) {
       await client.query('ROLLBACK');
