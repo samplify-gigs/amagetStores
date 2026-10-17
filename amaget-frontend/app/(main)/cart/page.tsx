@@ -28,6 +28,13 @@ export default function CartPage() {
     router.push("/checkout");
   }
 
+ 
+  const cartPayload = cart.map((item) => ({
+    productId: item.id,
+    quantity: item.quantity,
+  }));
+
+ 
   // ---------- Loading ----------
   if (loading) {
     return (

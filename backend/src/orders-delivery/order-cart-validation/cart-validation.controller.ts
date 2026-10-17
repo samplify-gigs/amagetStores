@@ -1,12 +1,13 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
 import { CartValidationService } from './cart-validation.service';
+import { CreateCartDTO } from 'src/DTOs/orders-delivery/createcartDto';
 
-@Controller('inserting-user-id')
+@Controller('cart-items')
 export class CartValidationController {
   constructor(private readonly CartValidate: CartValidationService) {}
 
-  @Post()
-  InsertUserId(@Body() body: any) {
+  @Post('insert-into-cart')
+  InsertUserId(@Body(new ValidationPipe()) body: CreateCartDTO) {
     return this.CartValidate.validateCartCreation(body);
   }
 }

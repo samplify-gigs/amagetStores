@@ -23,7 +23,7 @@ export class GlobalItemSearchService {
       const result = await this.db.query<SearchItems>(query, [
         '%' + searchQuery + '%',
       ]);
-
+     
       return result.rows;
     } catch (err) {
       console.error('searching product error:', err);

@@ -1,4 +1,24 @@
-import { IsInt, IsNotEmpty, IsPositive, Min } from 'class-validator';
+import {
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsPositive,
+  Min,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+
+class CartItemDTO {
+  @IsNotEmpty()
+  @IsPositive()
+  @IsInt()
+  productId!: number;
+
+  @IsNotEmpty()
+  @IsPositive()
+  @IsInt()
+  quantity!: number;
+}
 
 export class CreateCartDTO {
   @IsInt()
@@ -7,13 +27,8 @@ export class CreateCartDTO {
   @Min(1000)
   userId!: number;
 
-  @IsInt()
-  @IsNotEmpty()
-  @IsPositive()
-  ProductId!: number;
-
-  @IsInt()
-  @IsNotEmpty()
-  @IsPositive()
-  quantity!: number;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CartItemDTO)
+  items!: CartItemDTO[];
 }

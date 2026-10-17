@@ -1,4 +1,5 @@
 import {
+  HttpException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -11,15 +12,21 @@ type CartIDProps = {
   id: number;
 };
 
+type PriceProps = {
+  price: number;
+};
+
 @Injectable()
 export class CartValidationService {
   constructor(@Inject('PG_POOL') private readonly db: Pool) {}
 
   async validateCartCreation(body: CreateCartDTO) {
     const client = await this.db.connect();
-    const { userId, ProductId, quantity } = body;
+    const { userId, items } = body;
+
     try {
       await client.query('BEGIN');
+      // first insert the userid into cart
       const { rows } = await client.query<CartIDProps>(
         ` INSERT INTO new_cart (user_id)
           VALUES ($1)
@@ -29,49 +36,56 @@ export class CartValidationService {
         [userId],
       );
 
+      //get the cart id
       const cartId = rows[0].id;
 
-      //insert into cart items
-      const cartItemResult = await client.query(
-        `insert into new_cart_items (new_cart_id, product_id,quantity) values($1,$2,$3) on conflict (new_cart_id, product_id) do nothing 
+      //loop through items and insert into cart items including the just recieved cart id
+      for (const item of items) {
+        const cartItemResult = await client.query(
+          `insert into new_cart_items (new_cart_id, product_id,quantity) values($1,$2,$3) on conflict (new_cart_id, product_id) DO UPDATE SET quantity = EXCLUDED.quantity 
          returning product_id, quantity`,
-        [cartId, ProductId, quantity],
-      );
+          [cartId, item.productId, item.quantity],
+        );
 
-      // Make sure the cart item was actually created
-      if (cartItemResult.rowCount === 0) {
-        throw new InternalServerErrorException('Failed to create cart item');
+        // Making sure the cart item was actually created
+        if (cartItemResult.rowCount === 0) {
+          throw new InternalServerErrorException('Failed to create cart item');
+        }
       }
 
-      // Get product price
-      const productResult = await client.query<ProductPriceProps>(
-        `SELECT price
-         FROM products
-         WHERE id = $1`,
-        [ProductId],
-      );
+      let totalItemPrice = 0;
+      // looping throught items to get each products price
+      for (const item of items) {
+        const productResult = await client.query<PriceProps>(
+          `SELECT price
+         FROM new_products
+         WHERE legacy_product_id = $1`,
+          [item.productId],
+        );
 
-      // Product doesn't exist
-      if (productResult.rowCount === 0) {
-        throw new NotFoundException('Product not found');
+        // Product doesn't exist
+        if (productResult.rowCount === 0) {
+          throw new NotFoundException('Product not found');
+        }
+
+        const productPrice = Number(productResult.rows[0].price);
+        const priceInNaira = productPrice * 1400;
+
+        // Calculate total
+        const totalPrice = priceInNaira * item.quantity;
+        totalItemPrice += totalPrice;
+
+       
       }
-
-      const productPrice = Number(productResult.rows[0].price);
-
-      // Calculate total
-      const totalPrice = productPrice * quantity;
 
       await client.query('COMMIT');
       return {
-        cartId,
-        productId: ProductId,
-        quantity,
-        unitPrice: productPrice,
-        totalPrice,
+        totalItemPrice,
       };
     } catch (err) {
       await client.query('ROLLBACK');
       console.error('validating cart error:', err);
+      if (err instanceof HttpException) throw err; // import HttpException from '@nestjs/common'
       throw new InternalServerErrorException('failed to validate cart');
     } finally {
       client.release();

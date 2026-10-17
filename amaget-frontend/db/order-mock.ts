@@ -94,12 +94,11 @@ export const mockOrderItems = [
 export type DeliveryOptionId = "pod" | "pickup" | "instant" | "standard";
 export type PaymentMethodId = "card" | "paystack" | "transfer" | "cdl";
 
-interface DeliveryOption {
+export interface DeliveryOption {
   id: DeliveryOptionId;
   label: string;
   description: string;
-  eta: string;
-  fee: number;
+  eta?: string;
   icon: typeof IoCashOutline;
 }
 
@@ -110,24 +109,18 @@ export const fastDeliveryOptions: DeliveryOption[] = [
     id: "pod",
     label: "Pay on delivery",
     description: "For orders below ₦500,000",
-    eta: "1–2 business days",
-    fee: 1000,
     icon: IoCashOutline,
   },
   {
     id: "pickup",
     label: "Pickup at store",
     description: "No extra charges",
-    eta: "Ready within 24hrs",
-    fee: 0,
     icon: IoStorefrontOutline,
   },
   {
     id: "instant",
     label: "Instant delivery",
     description: "Delivered same day",
-    eta: "2–4 hours",
-    fee: 5000,
     icon: IoFlashOutline,
   },
 ];
@@ -138,7 +131,6 @@ export const standardDeliveryOptions: DeliveryOption[] = [
     label: "Standard delivery",
     description: "Delivered to your address",
     eta: "Arrives in 24–48hrs",
-    fee: 2500,
     icon: IoCarOutline,
   },
 ];

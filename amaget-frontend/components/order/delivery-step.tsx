@@ -1,17 +1,17 @@
-import { DeliveryOptionId } from "@/db/order-mock";
+import { DeliveryOptionId, DeliveryOption } from "@/db/order-mock";
 
 export function DeliveryStep({
   options,
   selected,
   onSelect,
 }: {
-  options: DeliveryOptionId[];
+  options: DeliveryOption[];
   selected: DeliveryOptionId | null;
   onSelect: (id: DeliveryOptionId) => void;
 }) {
   return (
     <div className="space-y-2.5">
-      {options.map(({ id, label, description, eta, fee, icon: Icon }) => {
+      {options.map(({ id, label, description, eta, icon: Icon }) => {
         const isSelected = selected === id;
         return (
           <button
@@ -41,9 +41,6 @@ export function DeliveryStep({
               <span className="block text-xs text-foreground/45">
                 {description} · {eta}
               </span>
-            </span>
-            <span className="flex-shrink-0 text-sm font-medium text-foreground/70">
-              {fee === 0 ? "Free" : `₦${fee.toLocaleString()}`}
             </span>
           </button>
         );

@@ -43,7 +43,6 @@ export default function DeliveryPaymentPage() {
   useEffect(() => {
     async function FetchUserValidatedDetails() {
       try {
-        
       } catch (err) {
         console.log("failed to fetch and validate user details error is:", err);
       }
@@ -136,6 +135,8 @@ export default function DeliveryPaymentPage() {
     !needsPayment || !!paymentMethod,
   ];
 
+  console.log("this is state id:", stateId);
+  console.log("this is location id:", locationId);
   // ---------- Loading ----------
   if (status === "loading") {
     return (

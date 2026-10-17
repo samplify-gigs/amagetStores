@@ -23,7 +23,7 @@ export function MobileTotalBar({
               : "Total"}
           </p>
           <p className="text-base font-semibold text-foreground">
-            ${total.toFixed(2)}
+            ₦{total.toFixed(2)}
           </p>
         </div>
         <button
