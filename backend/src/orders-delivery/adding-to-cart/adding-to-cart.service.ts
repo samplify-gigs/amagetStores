@@ -90,7 +90,7 @@ export class CartValidationService {
     } catch (err) {
       await client.query('ROLLBACK');
       console.error('validating cart error:', err);
-      if (err instanceof HttpException) throw err; // import HttpException from '@nestjs/common'
+      if (err instanceof HttpException) throw err; 
       throw new InternalServerErrorException('failed to validate cart');
     } finally {
       client.release();
