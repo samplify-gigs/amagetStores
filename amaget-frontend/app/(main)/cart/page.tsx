@@ -24,15 +24,14 @@ export default function CartPage() {
     0,
   );
 
+ 
+
   function gotoCheckout() {
     router.push("/checkout");
   }
 
  
-  const cartPayload = cart.map((item) => ({
-    productId: item.id,
-    quantity: item.quantity,
-  }));
+ 
 
  
   // ---------- Loading ----------

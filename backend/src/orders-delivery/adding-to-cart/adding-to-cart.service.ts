@@ -25,6 +25,7 @@ export class CartValidationService {
   async validateCartCreation(body: CreateCartDTO) {
     const client = await this.db.connect();
     const { userId, items } = body;
+    console.log('get cart:', body);
 
     try {
       await client.query('BEGIN');
@@ -81,7 +82,7 @@ export class CartValidationService {
         const totalPriceINaira = totalPrice * 1400;
         totalItemPrice += totalPriceINaira;
       }
-      
+
       await client.query('COMMIT');
       return {
         totalItemPrice,
@@ -90,7 +91,7 @@ export class CartValidationService {
     } catch (err) {
       await client.query('ROLLBACK');
       console.error('validating cart error:', err);
-      if (err instanceof HttpException) throw err; 
+      if (err instanceof HttpException) throw err;
       throw new InternalServerErrorException('failed to validate cart');
     } finally {
       client.release();

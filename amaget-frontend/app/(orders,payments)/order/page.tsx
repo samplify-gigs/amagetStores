@@ -8,7 +8,6 @@ import { PaymentStep } from "@/components/order/psyment-step";
 import { TopBar } from "@/components/order/topbar";
 import {
   DeliveryOptionId,
-  FAST_STATE_CODES,
   fastDeliveryOptions,
   LocationRow,
   mockOrderItems,
@@ -22,11 +21,32 @@ import { IoLockClosedOutline, IoAlertCircleOutline } from "react-icons/io5";
 
 type FetchStatus = "loading" | "error" | "success";
 
+interface DeliveryOptionProps {
+  id: number;
+  method: string; // expected: "pod" | "pickup" | "instant" | "standard"
+  fee: number | string; // postgres numeric can arrive as a string
+}
+
+interface Area {
+  locationid: string | number;
+  stateid: string | number;
+  name: string;
+  addresss: string;
+  delivery_options: DeliveryOptionProps[];
+}
+
+// Labels / icons / ETAs live in the mock file; only the FEE comes from the backend.
+type DeliveryOption = (typeof fastDeliveryOptions)[number];
+const deliveryMeta: Record<string, DeliveryOption> = Object.fromEntries(
+  [...fastDeliveryOptions, ...standardDeliveryOptions].map((o) => [o.id, o]),
+);
+
 export default function DeliveryPaymentPage() {
   const router = useRouter();
   const [status, setStatus] = useState<FetchStatus>("loading");
   const [state, setState] = useState<StateRow[]>([]);
   const [locationItems, setLocation] = useState<LocationRow[]>([]);
+  const [areas, setAreas] = useState<Area[]>([]);
 
   const [stateId, setStateId] = useState<string | null>(null);
   const [locationId, setLocationId] = useState<string | null>(null);
@@ -37,31 +57,33 @@ export default function DeliveryPaymentPage() {
     null,
   );
   const { cart } = useCart();
+  const BaseUrl = process.env.NEXT_PUBLIC_BASEURL;
   const CartItemms = cart[0];
   const userId = "amg4673user100";
 
-  useEffect(() => {
-    async function FetchUserValidatedDetails() {
-      try {
-      } catch (err) {
-        console.log("failed to fetch and validate user details error is:", err);
-      }
-    }
-  });
-
-  const BaseUrl = process.env.NEXT_PUBLIC_BASEURL;
-
+  // One fetch for everything the page needs, so loading/error cover both calls.
   const fetchDeliveryItems = useCallback(async () => {
+    setStatus("loading");
     try {
-      const result = await fetch(`${BaseUrl}/orders-delivery`);
-      if (!result.ok) throw new Error(`Request failed with ${result.status}`);
+      const [baseRes, feesRes] = await Promise.all([
+        fetch(`${BaseUrl}/orders-delivery`),
+        fetch(`${BaseUrl}/orders/get-delivery-details-fee`),
+      ]);
+      if (!baseRes.ok || !feesRes.ok) {
+        throw new Error(
+          `Request failed with ${baseRes.ok ? feesRes.status : baseRes.status}`,
+        );
+      }
 
-      const res = await result.json();
-      setState(res.state);
-      setLocation(res.location);
+      const base = await baseRes.json();
+      const fees: Area[] = await feesRes.json();
+
+      setState(base.state);
+      setLocation(base.location);
+      setAreas(fees);
       setStatus("success");
     } catch (err) {
-      console.error("failed to fetch location and state:", err);
+      console.error("failed to fetch location, state and fees:", err);
       setStatus("error");
     }
   }, [BaseUrl]);
@@ -70,19 +92,22 @@ export default function DeliveryPaymentPage() {
     fetchDeliveryItems();
   }, [fetchDeliveryItems]);
 
-  const selectedState = state.find((s) => String(s.id) === stateId) ?? null;
   const locationsForState = locationItems.filter(
     (l) => String(l.state_id) === stateId,
   );
   const selectedLocation =
     locationItems.find((l) => String(l.id) === locationId) ?? null;
 
-  const isFastState = selectedState
-    ? FAST_STATE_CODES.includes(selectedState.code)
-    : false;
-  const deliveryOptions = isFastState
-    ? fastDeliveryOptions
-    : standardDeliveryOptions;
+  // Delivery options for the chosen location, with the real fee from the backend
+  const selectedArea =
+    areas.find((a) => String(a.locationid) === locationId) ?? null;
+  const deliveryOptions: DeliveryOption[] = (
+    selectedArea?.delivery_options ?? []
+  ).flatMap((opt) => {
+    const meta = deliveryMeta[opt.method];
+    return meta ? [{ ...meta, fee: Number(opt.fee) }] : [];
+  });
+
   const selectedDelivery =
     deliveryOptions.find((d) => d.id === deliveryOption) ?? null;
   const needsPayment = selectedDelivery ? selectedDelivery.id !== "pod" : false;
@@ -108,8 +133,15 @@ export default function DeliveryPaymentPage() {
 
   const handleLocationChange = (id: string) => {
     setLocationId(id);
-    setDeliveryOption(null);
     setPaymentMethod(null);
+
+    // If this location only offers one method, pick it for them
+    const area = areas.find((a) => String(a.locationid) === id);
+    const onlyOption =
+      area?.delivery_options.length === 1
+        ? (area.delivery_options[0].method as DeliveryOptionId)
+        : null;
+    setDeliveryOption(onlyOption);
   };
 
   const handleDeliveryChange = (id: DeliveryOptionId) => {
@@ -119,7 +151,7 @@ export default function DeliveryPaymentPage() {
 
   const handleContinue = () => {
     if (!canContinue) return;
-    // TODO: point at your real payment-verification route
+    // TODO: PATCH the order here with { locationId, deliveryMethod, paymentMethod }
     console.log("continue to payment verification", {
       location: selectedLocation,
       delivery: selectedDelivery,
@@ -135,8 +167,6 @@ export default function DeliveryPaymentPage() {
     !needsPayment || !!paymentMethod,
   ];
 
-  console.log("this is state id:", stateId);
-  console.log("this is location id:", locationId);
   // ---------- Loading ----------
   if (status === "loading") {
     return (
@@ -191,6 +221,7 @@ export default function DeliveryPaymentPage() {
 
       {/* Mobile (<640px) */}
       <div className="sm:hidden">
+        {/** mobile header */}
         <div className="px-4 pt-5">
           <h1 className="text-lg font-semibold text-foreground">
             Delivery &amp; payment

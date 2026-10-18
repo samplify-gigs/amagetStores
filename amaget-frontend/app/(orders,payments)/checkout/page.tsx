@@ -1,10 +1,11 @@
 "use client";
 
+import { useCart } from "@/components-utils/cart/items-to-cart";
 import { CheckoutHeader } from "@/components/checkout/checkout-header";
 import { MobileTotalBar } from "@/components/checkout/mobile-totalbar";
 import { OrderSummaryList } from "@/components/checkout/ordersummary";
 import { ShippingForm } from "@/components/checkout/shippingForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoLockClosedOutline } from "react-icons/io5";
 
 export interface CheckoutItem {
@@ -66,11 +67,42 @@ const DELIVERY_FEE = 3.5;
 
 export default function CheckoutPage() {
   const items = mockCheckoutItems;
+  const { cart } = useCart();
   const [details, setDetails] = useState<ShippingDetails>(initialDetails);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
-
-  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const subtotal = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const total = subtotal + DELIVERY_FEE;
+  const urlHome = process.env.NEXT_PUBLIC_BASEURL;
+  const cartPayload = cart.map((item) => ({
+    productId: Number(item.id),
+    quantity: Number(item.quantity),
+  }));
+
+
+  const userId = 12345;
+
+  useEffect(() => {
+    async function getCart() {
+      try {
+        const res = await fetch(`${urlHome}/cart-items/insert-into-cart`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userId,
+            items: cartPayload,
+          }),
+        });
+
+        const data = await res.json();
+        console.log("data received:", data);
+      } catch (err) {
+        console.error("failed to send to cart:", err);
+      }
+    }
+
+    getCart();
+  }, []);
 
   const handleChange =
     (field: keyof ShippingDetails) =>
@@ -78,10 +110,7 @@ export default function CheckoutPage() {
       setDetails((prev) => ({ ...prev, [field]: e.target.value }));
     };
 
-  const handlePlaceOrder = () => {
-    // Backend handles validation + payment — this just hands off the payload.
-    console.log("place order", { items, details, paymentMethod, total });
-  };
+  const handlePlaceOrder = () => {};
 
   return (
     <div className="flex flex-1 flex-col">
