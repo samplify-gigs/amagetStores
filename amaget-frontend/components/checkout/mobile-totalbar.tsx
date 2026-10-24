@@ -13,7 +13,7 @@ export function MobileTotalBar({
         <div className="min-w-0">
           <p className="text-[11px] text-foreground/45">Total</p>
           <p className="text-base font-semibold text-foreground">
-            ${total.toFixed(2)}
+            ₦{total.toLocaleString()}
           </p>
         </div>
         <button

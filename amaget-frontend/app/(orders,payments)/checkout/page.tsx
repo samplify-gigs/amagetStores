@@ -6,34 +6,21 @@ import { MobileTotalBar } from "@/components/checkout/mobile-totalbar";
 import { OrderSummaryList } from "@/components/checkout/ordersummary";
 import { ShippingForm } from "@/components/checkout/shippingForm";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { IoLockClosedOutline } from "react-icons/io5";
 
-export interface CheckoutItem {
+export type CartItems = {
   id: string;
   name: string;
-  image: string;
   price: number;
+  image: string;
   quantity: number;
-}
+};
 
-const mockCheckoutItems: CheckoutItem[] = [
-  {
-    id: "21949",
-    name: "Samsung Galaxy Note 9 128gb, London Used",
-    image:
-      "https://res.cloudinary.com/dawdn2m0d/image/upload/v1786552064/21949-Samsung_Galaxy_Note_9_128gb_London_Used-1_ywake6.jpg",
-    price: 147.0,
-    quantity: 2,
-  },
-  {
-    id: "18332",
-    name: "Anker PowerCore 10000 Portable Charger",
-    image:
-      "https://res.cloudinary.com/dawdn2m0d/image/upload/v1786552064/anker-powercore-placeholder.jpg",
-    price: 22.5,
-    quantity: 1,
-  },
-];
+type CartProps = {
+  totalItemPrice: number;
+  productData: CartItems[];
+};
 
 export interface ShippingDetails {
   fullName: string;
@@ -66,21 +53,25 @@ const initialDetails: ShippingDetails = {
 const DELIVERY_FEE = 3.5;
 
 export default function CheckoutPage() {
-  const items = mockCheckoutItems;
   const { cart } = useCart();
   const [details, setDetails] = useState<ShippingDetails>(initialDetails);
-  const subtotal = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const total = subtotal + DELIVERY_FEE;
-  const urlHome = process.env.NEXT_PUBLIC_BASEURL;
-  const cartPayload = cart.map((item) => ({
-    productId: Number(item.id),
-    quantity: Number(item.quantity),
-  }));
+  const [cartDetails, setCartDetails] = useState<CartProps>({
+    totalItemPrice: 0,
+    productData: [],
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
+  const urlHome = process.env.NEXT_PUBLIC_BASEURL;
 
   const userId = 12345;
+  const orderNo = "12345";
 
   useEffect(() => {
+    if (!cart.length) return;
+    const controller = new AbortController();
+
     async function getCart() {
       try {
         const res = await fetch(`${urlHome}/cart-items/insert-into-cart`, {
@@ -90,19 +81,31 @@ export default function CheckoutPage() {
           },
           body: JSON.stringify({
             userId: userId,
-            items: cartPayload,
+            items: cart.map((item) => ({
+              productId: Number(item.id),
+              quantity: Number(item.quantity),
+            })),
           }),
+          signal: controller.signal,
         });
-
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
+        setCartDetails({
+          totalItemPrice: data.totalItemPrice ?? 0,
+          productData: (data.productData ?? []).filter(Boolean),
+        });
         console.log("data received:", data);
       } catch (err) {
-        console.error("failed to send to cart:", err);
+        if ((err as Error).name !== "AbortError") {
+          console.error("failed to send to cart:", err);
+        }
       }
     }
 
     getCart();
-  }, []);
+
+    return () => controller.abort();
+  }, [cart, urlHome]);
 
   const handleChange =
     (field: keyof ShippingDetails) =>
@@ -110,7 +113,45 @@ export default function CheckoutPage() {
       setDetails((prev) => ({ ...prev, [field]: e.target.value }));
     };
 
-  const handlePlaceOrder = () => {};
+  console.log("cart items received:", cartDetails);
+
+  const handlePlaceOrder = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`${urlHome}/checkout/checkout-validate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          name: details.fullName,
+          email: details.email,
+          phoneNo: details.phone,
+          orderNumber: orderNo,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.message ?? `HTTP ${res.status}`);
+      }
+
+      console.log("order data:", data);
+      router.push("/order");
+    } catch (err) {
+      console.error("failed to add to order", err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="flex flex-1 flex-col">
@@ -123,18 +164,25 @@ export default function CheckoutPage() {
           <h2 className="text-lg font-semibold text-foreground">
             Checkout{" "}
             <span className="font-normal text-foreground/45">
-              {items.length} {items.length === 1 ? "item" : "items"}
+              {cartDetails.productData.length}{" "}
+              {cartDetails.productData.length === 1 ? "item" : "items"}
             </span>
           </h2>
         </div>
 
-        <OrderSummaryList items={items} className="mt-4 px-4" />
+        <OrderSummaryList
+          items={cartDetails?.productData}
+          className="mt-4 px-4"
+        />
 
         <div className="mt-6 px-4">
           <ShippingForm details={details} onChange={handleChange} />
         </div>
 
-        <MobileTotalBar total={total} onPlaceOrder={handlePlaceOrder} />
+        <MobileTotalBar
+          total={cartDetails.totalItemPrice}
+          onPlaceOrder={handlePlaceOrder}
+        />
       </div>
 
       {/* sm and up */}
@@ -142,7 +190,8 @@ export default function CheckoutPage() {
         <h2 className="mt-4 text-2xl font-semibold text-foreground">
           Checkout{" "}
           <span className="font-normal text-foreground/45">
-            {items.length} {items.length === 1 ? "item" : "items"}
+            {cartDetails.productData.length}{" "}
+            {cartDetails.productData.length === 1 ? "item" : "items"}
           </span>
         </h2>
 
@@ -163,20 +212,24 @@ export default function CheckoutPage() {
               <h3 className="text-sm font-semibold text-foreground">
                 Order summary
               </h3>
-              <OrderSummaryList items={items} className="mt-4" compact />
+              <OrderSummaryList
+                items={cartDetails.productData}
+                className="mt-4"
+                compact
+              />
 
               <div className="mt-5 space-y-2 border-t border-border/15 pt-4 text-sm">
                 <div className="flex justify-between text-foreground/60">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>₦{cartDetails.totalItemPrice.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-foreground/60">
+                {/*<div className="flex justify-between text-foreground/60">
                   <span>Delivery</span>
-                  <span>${DELIVERY_FEE.toFixed(2)}</span>
-                </div>
+                  <span></span>
+                </div>*/}
                 <div className="flex justify-between pt-2 text-base font-semibold text-foreground">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>${cartDetails.totalItemPrice.toLocaleString()}</span>
                 </div>
               </div>
 

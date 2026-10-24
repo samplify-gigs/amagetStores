@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Pool } from 'pg';
+import { createOrderUserid } from 'src/DTOs/orders-delivery/orderUserId';
 
 export interface DeliveryOption {
   id: number;
@@ -17,6 +18,10 @@ export interface DeliveryLocation {
   name: string;
   address: string;
   delivery_options: DeliveryOption[];
+}
+
+export interface PriceProps {
+  total_price: number;
 }
 
 @Injectable()
@@ -43,6 +48,30 @@ export class OrdersFeeService {
       throw new InternalServerErrorException(
         'couldnt complete delivery fee from order',
       );
+    }
+  }
+
+  async getOrderDetailesUserid(body: createOrderUserid) {
+    const { userId } = body;
+
+    try {
+      const fetchTotalPrice = await this.db.query<PriceProps>(
+        `
+        select sum(noi.unit_price) as total_price
+        from new_order no
+        join new_order_items noi on no.id = noi.order_id
+        where user_id = $1
+        ;
+        `,
+        [userId],
+      );
+
+      const totalPrice = fetchTotalPrice.rows
+
+      return totalPrice;
+    } catch (err) {
+      console.error('failed to fetch order userId:', err);
+      throw new InternalServerErrorException(err);
     }
   }
 }

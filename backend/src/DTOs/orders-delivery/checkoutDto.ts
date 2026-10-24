@@ -1,17 +1,22 @@
 import {
   IsEmail,
+  IsInt,
   IsNotEmpty,
+  IsPositive,
   IsString,
   Length,
   Matches,
   MaxLength,
+  Min,
   MinLength,
 } from 'class-validator';
 
 export class CheckoutDto {
-  @IsString()
+  @IsInt()
   @IsNotEmpty()
-  userId!: string;
+  @IsPositive()
+  @Min(1000)
+  userId!: number;
 
   @IsString()
   @IsNotEmpty()

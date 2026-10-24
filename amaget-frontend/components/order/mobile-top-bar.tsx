@@ -1,3 +1,4 @@
+import { PriceFormatter } from "@/Helper-functions/price";
 import { IoLockClosedOutline } from "react-icons/io5";
 
 export function MobileTotalBar({
@@ -23,7 +24,7 @@ export function MobileTotalBar({
               : "Total"}
           </p>
           <p className="text-base font-semibold text-foreground">
-            ₦{total.toFixed(2)}
+            ₦{PriceFormatter(total)}
           </p>
         </div>
         <button

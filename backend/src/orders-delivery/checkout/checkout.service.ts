@@ -64,7 +64,7 @@ export class CheckoutService {
       }
 
       const products = getProductDetails.rows;
-      console.log('the products:', products);
+      
 
       //insert into order table
 

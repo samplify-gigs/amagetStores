@@ -1,4 +1,6 @@
-import { CheckoutItem } from "@/app/(orders,payments)/checkout/page";
+
+import { CartItems } from "@/app/(orders,payments)/checkout/page";
+import { PriceFormatter } from "@/Helper-functions/price";
 import Image from "next/image";
 
 export function OrderSummaryList({
@@ -6,13 +8,13 @@ export function OrderSummaryList({
   className = "",
   compact = false,
 }: {
-  items: CheckoutItem[];
+  items: CartItems[];
   className?: string;
   compact?: boolean;
 }) {
   return (
     <div
-      className={`divide-y divide-border/15 rounded-2xl border border-border/15 bg-card ${compact ? "" : "px-4"} ${className}`}
+      className={`divide-y divide-border/15 rounded-2xl border border-border/15 bg-card ₦{compact ? "" : "px-4"} ₦{className}`}
     >
       {items.map((item) => (
         <div
@@ -37,12 +39,12 @@ export function OrderSummaryList({
               {item.name}
             </p>
             <p className="mt-0.5 text-xs text-foreground/45">
-              ${item.price.toFixed(2)} each
+              ₦{PriceFormatter(item.price)} each
             </p>
           </div>
 
           <p className="flex-shrink-0 text-sm font-semibold text-foreground">
-            ${(item.price * item.quantity).toFixed(2)}
+            ₦{PriceFormatter(item.price * item.quantity)}
           </p>
         </div>
       ))}

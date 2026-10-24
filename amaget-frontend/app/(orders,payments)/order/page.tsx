@@ -15,6 +15,7 @@ import {
   standardDeliveryOptions,
   StateRow,
 } from "@/db/order-mock";
+import { PriceFormatter } from "@/Helper-functions/price";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { IoLockClosedOutline, IoAlertCircleOutline } from "react-icons/io5";
@@ -45,6 +46,7 @@ export default function DeliveryPaymentPage() {
   const router = useRouter();
   const [status, setStatus] = useState<FetchStatus>("loading");
   const [state, setState] = useState<StateRow[]>([]);
+  const [totalPrice, setTotalPrice] = useState(0);
   const [locationItems, setLocation] = useState<LocationRow[]>([]);
   const [areas, setAreas] = useState<Area[]>([]);
 
@@ -58,18 +60,27 @@ export default function DeliveryPaymentPage() {
   );
   const { cart } = useCart();
   const BaseUrl = process.env.NEXT_PUBLIC_BASEURL;
-  const CartItemms = cart[0];
-  const userId = "amg4673user100";
+
+  const userId = 12345;
 
   // One fetch for everything the page needs, so loading/error cover both calls.
   const fetchDeliveryItems = useCallback(async () => {
     setStatus("loading");
     try {
-      const [baseRes, feesRes] = await Promise.all([
+      const [baseRes, feesRes, fetchPrice] = await Promise.all([
         fetch(`${BaseUrl}/orders-delivery`),
         fetch(`${BaseUrl}/orders/get-delivery-details-fee`),
+        fetch(`${BaseUrl}/orders/get-total-price`, {
+          method: "POST",
+          headers: {
+            "content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userId,
+          }),
+        }),
       ]);
-      if (!baseRes.ok || !feesRes.ok) {
+      if (!baseRes.ok || !feesRes.ok || !fetchPrice.ok) {
         throw new Error(
           `Request failed with ${baseRes.ok ? feesRes.status : baseRes.status}`,
         );
@@ -77,13 +88,15 @@ export default function DeliveryPaymentPage() {
 
       const base = await baseRes.json();
       const fees: Area[] = await feesRes.json();
+      const price = await fetchPrice.json();
 
       setState(base.state);
       setLocation(base.location);
+      setTotalPrice(price[0].total_price);
       setAreas(fees);
       setStatus("success");
     } catch (err) {
-      console.error("failed to fetch location, state and fees:", err);
+      console.error("failed to fetch location, state , fees,prices:", err);
       setStatus("error");
     }
   }, [BaseUrl]);
@@ -117,7 +130,7 @@ export default function DeliveryPaymentPage() {
     [],
   );
   const deliveryFee = selectedDelivery?.fee ?? 0;
-  const total = subtotal + deliveryFee;
+  const total = totalPrice + deliveryFee;
 
   const canContinue =
     !!selectedLocation &&
@@ -363,7 +376,7 @@ export default function DeliveryPaymentPage() {
               <div className="mt-4 space-y-2 border-t border-border/15 pt-4 text-sm">
                 <div className="flex justify-between text-foreground/60">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>₦{subtotal}</span>
                 </div>
                 <div className="flex justify-between text-foreground/60">
                   <span>Delivery</span>
@@ -375,7 +388,7 @@ export default function DeliveryPaymentPage() {
                 </div>
                 <div className="flex justify-between pt-2 text-base font-semibold text-foreground">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>₦{PriceFormatter(totalPrice)}</span>
                 </div>
               </div>
 

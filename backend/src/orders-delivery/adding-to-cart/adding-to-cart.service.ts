@@ -13,9 +13,11 @@ type CartIDProps = {
 };
 
 type ProductDataProps = {
+  id: string;
   name: string;
   price: number;
   url: string;
+  quantity: number;
 };
 
 @Injectable()
@@ -61,9 +63,10 @@ export class CartValidationService {
       // looping throught items to get each products price
       for (const item of items) {
         const productResult = await client.query<ProductDataProps>(
-          `SELECT p.name, p.price,url
+          `SELECT p.id, p.name, p.price,url as image,nci.quantity as quantity
          FROM new_products as p
          INNER JOIN new_images img on img.product_id = p.id
+         INNER JOIN new_cart_items nci on p.legacy_product_id = nci.product_id
          WHERE legacy_product_id = $1
          limit 1`,
           [item.productId],
