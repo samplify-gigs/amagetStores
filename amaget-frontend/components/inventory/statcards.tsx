@@ -14,7 +14,7 @@ export default function StatCards({ stats }: { stats: Stats }) {
   return (
     <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
       {cards.map((c) => (
-        <li key={c.label} className="flex flex-col items-start gap-3 rounded-xl border border-border bg-card p-4 shadow-sm sm:flex-row sm:items-center sm:gap-4 sm:p-5">
+        <li key={c.label} className="flex flex-col items-start gap-3 rounded-xl  bg-card p-4 shadow-md sm:flex-row sm:items-center sm:gap-4 sm:p-5">
           <span className={`grid size-11 shrink-0 place-items-center rounded-xl ${c.tone}`}>
             <Icon name={c.icon} className="size-6" />
           </span>

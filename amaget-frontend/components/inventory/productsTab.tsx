@@ -33,15 +33,15 @@ function EmptyState() {
   );
 }
 
-const pageButton = "grid size-10 place-items-center rounded-lg border border-border text-sm font-medium transition hover:bg-background focus-visible:outline-2 focus-visible:outline-primary";
+const pageButton = "grid size-10 place-items-center rounded-lg border border-black/20 text-sm font-medium transition hover:bg-background focus-visible:outline-2 focus-visible:outline-primary";
 
 export default function ProductsTab({ products, store, stats }: { products: Product[]; store: StoreName; stats: typeof mockStats }) {
   return (
     <section aria-labelledby="available-heading" className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 id="available-heading" className="text-2xl font-semibold tracking-tight sm:text-3xl">Available products</h1>
-          <p className="mt-1 text-foreground/70">Stock and prices for the {store} store.</p>
+          <h1 id="available-heading" className="text-xl font-semibold tracking-tight sm:text-3xl">Available products</h1>
+          <p className="mt-1 text-foreground/70 text-sm">Stock and prices for the {store} store.</p>
         </div>
         <Link href="?tab=manage" className={primaryButton}>
           <Icon name="plus" className="size-5" />
@@ -51,9 +51,9 @@ export default function ProductsTab({ products, store, stats }: { products: Prod
 
       <StatCards stats={stats} />
 
-      <div className="rounded-xl border border-border bg-card shadow-sm">
+      <div className="rounded-xl bg-card shadow-md">
         {/* Filters (visual only) */}
-        <div className="flex flex-col gap-3 border-b border-border p-4 lg:flex-row lg:items-center">
+        <div className="flex flex-col gap-3  p-4 lg:flex-row lg:items-center">
           <div className="relative flex-1">
             <Icon name="search" className="pointer-events-none absolute top-1/2 left-3.5 size-5 -translate-y-1/2 text-foreground/50" />
             <input type="search" aria-label="Search by product name or SKU" placeholder="Search by product name or SKU" className={`${controlClass} pl-11`} />
@@ -128,7 +128,7 @@ export default function ProductsTab({ products, store, stats }: { products: Prod
             </div>
 
             {/* Phones and tablets: compact list */}
-            <ul className="divide-y divide-border lg:hidden">
+            <ul className="divide-y divide-primary/10 lg:hidden">
               {products.map((p) => (
                 <li key={p.id} className="p-4">
                   <div className="flex items-start gap-3">

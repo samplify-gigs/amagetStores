@@ -2,6 +2,7 @@ import Link from "next/link";
 import BrandMark from "./Brandmark";
 import Icon from "./icons";
 import type { StoreName } from "./mock";
+import Image from "next/image";
 
 export type TabKey = "available" | "manage";
 
@@ -18,10 +19,10 @@ export function Sidebar({ store, staffName, active }: { store: StoreName; staffN
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-gray-900 p-4 text-gray-100 lg:flex">
       <div className="flex items-center gap-3 px-1 pt-1">
-        <BrandMark />
+       <Image src="/Amaget-Logo-Optimized.png" alt="Amaget" width={50} height={90} className="h-7 w-auto" />
         <div>
-          <p className="font-semibold leading-tight">Amaget</p>
-          <p className="text-xs text-gray-400">Inventory</p>
+          <p className="font-semibold leading-tight">Inventory</p>
+          
         </div>
       </div>
 

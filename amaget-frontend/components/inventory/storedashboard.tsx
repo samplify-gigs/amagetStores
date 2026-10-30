@@ -19,7 +19,9 @@ type StoreDashboardProps = {
 export default function StoreDashboard({ store, staffName, stats, products, activeTab, editingProduct }: StoreDashboardProps) {
   return (
     <div className="min-h-dvh bg-background lg:pl-64">
+      {/** sidebar for lg  */}
       <Sidebar store={store} staffName={staffName} active={activeTab} />
+      {/*header for mobile and tablet */}
       <DashboardHeader store={store} staffName={staffName} />
 
       <main className="mx-auto w-full max-w-7xl space-y-6 px-4 py-6 pb-28 sm:px-6 lg:px-8 lg:pb-10">
