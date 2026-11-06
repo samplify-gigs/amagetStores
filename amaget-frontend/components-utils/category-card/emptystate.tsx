@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import { CATBRAND as BRAND } from "@/db/mock";
 
-export function EmptyState({ onReset }) {
+export function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center text-center py-20 px-6">
       <div className="w-14 h-14 rounded-full bg-gray-50 flex items-center justify-center mb-4">
@@ -15,7 +15,7 @@ export function EmptyState({ onReset }) {
         instead.
       </p>
       <button
-        onClick={onReset}
+        
         className="mt-4 text-[13px] font-semibold text-white px-4 py-2 rounded-lg"
         style={{ backgroundColor: BRAND }}
       >

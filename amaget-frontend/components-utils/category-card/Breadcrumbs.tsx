@@ -1,4 +1,3 @@
-import { CATEGORYPAGES as CATEGORY } from "@/db/mock";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 

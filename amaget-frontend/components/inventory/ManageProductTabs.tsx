@@ -2,7 +2,7 @@ import Link from "next/link";
 import Icon from "./icons";
 import ProductThumb from "./ProductThumb";
 import StatusBadge from "./StatusBadge";
-import { controlClass, editLink, primaryButton } from "./Ui";
+import { controlClass, editLink, primaryButton } from "./UiForInventory";
 import type { Product, StoreName } from "./mock";
 
 const naira = (n: number) => `₦${n.toLocaleString("en-NG")}`;

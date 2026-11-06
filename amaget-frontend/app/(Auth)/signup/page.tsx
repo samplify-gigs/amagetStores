@@ -9,12 +9,7 @@ export const metadata = { title: "Create account" };
 
 export default function SignUpPage() {
   return (
-    <AuthShell
-      title="Create your account"
-      subtitle="It only takes a minute."
-      headline="Make yourself at home."
-      tagline="Set up your account and you’re ready to go."
-    >
+    <AuthShell title="Create your account" subtitle="It only takes a minute.">
       <form className="space-y-5" noValidate>
         <TextField
           label="Full name"

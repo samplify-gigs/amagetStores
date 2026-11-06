@@ -29,12 +29,16 @@ export type upgrade = {
   category: string;
 };
 
+type Products = {
+  id: string;
+  name: string;
+};
+
 export type NavBarprops = {
   open: boolean;
   setOpenAction: React.Dispatch<React.SetStateAction<boolean>>;
   query?: string;
   products?: Products[];
-  session?: Session | null;
 };
 
 export const NAV_LINKS = [
@@ -322,18 +326,18 @@ export const LifestyleItems = [
 
 export const allowedCategories: Record<string, number> = {
   "phones-tablets": 1,
-  "laptops": 2,
-  "desktop": 3,
-  "monitors": 4,
+  laptops: 2,
+  desktop: 3,
+  monitors: 4,
   "printers-scanners-copiers": 5,
   "accessories-lifestyle": 6,
-  "servers": 7,
-  "gaming": 8,
+  servers: 7,
+  gaming: 8,
   "phone-parts": 9,
   "computer-accessories": 10,
-  "software": 11,
+  software: 11,
   "power-backup": 12,
-  "electronics": 13,
+  electronics: 13,
   "cctv-security": 14,
   "camera-lenses": 15,
   "home-appliances": 16,
@@ -399,10 +403,6 @@ export const NavLinksForSidebar = [
   { icon: FiPackage, label: "My Orders", href: "/orders" },
 ];
 
-
-
-
-
 export const SIDEBAR_CATEGORIES = [
   { name: "Shirts", active: true },
   { name: "T-Shirts" },
@@ -412,27 +412,131 @@ export const SIDEBAR_CATEGORIES = [
   { name: "Accessories" },
 ];
 
-export const TRENDING = ["Linen shirts", "Slim fit", "Under ₦15,000", "New arrivals"];
- 
-export const FILTERS = {
-  Price: ["Under ₦10,000", "₦10,000 – ₦20,000", "₦20,000 – ₦35,000", "Above ₦35,000"],
-  Brand: ["Amaget Essentials", "Ferro", "Northline", "Coast & Co."],
-  
-};
- 
-export const COLORS = ["#1c2b4a", "#3a5f3a", "#ffffff", "#111111", "#8a6d3b", "#c0392b"];
- 
-export const CATPRODUCTS = [
-  { id: 1, name: "Sky Blue Formal Shirt", fit: "Slim Fit", material: "Cotton", price: 49.99, was: 69.99, rating: 4.6, colors: ["#7ea8c9", "#1c2b4a", "#c9c9c9"], extra: 2, img: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&q=80" },
-  { id: 2, name: "Olive Green Shirt", fit: "Slim Fit", material: "Cotton", price: 44.99, was: 64.99, rating: 4.5, colors: ["#3a5f3a", "#c9c9c9"], extra: 3, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&q=80" },
-  { id: 3, name: "White Printed Shirt", fit: "Regular Fit", material: "Cotton", price: 39.99, was: 54.99, rating: 4.4, colors: ["#ffffff", "#1c2b4a"], extra: 0, img: "https://images.unsplash.com/photo-1620012253295-c15cc3e65df4?w=500&q=80" },
-  { id: 4, name: "Navy Check Shirt", fit: "Slim Fit", material: "Cotton", price: 54.99, was: 79.99, rating: 4.7, colors: ["#1c2b4a", "#111111"], extra: 1, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&q=80" },
-  { id: 5, name: "Charcoal Linen Shirt", fit: "Relaxed Fit", material: "Linen", price: 59.99, was: 0, rating: 4.3, colors: ["#3a3a3a"], extra: 0, img: "https://images.unsplash.com/photo-1620327438706-fd979e39c1a9?w=500&q=80" },
-  { id: 6, name: "Mustard Casual Shirt", fit: "Regular Fit", material: "Cotton", price: 34.99, was: 44.99, rating: 4.2, colors: ["#c9a24b", "#111111"], extra: 2, img: "https://images.unsplash.com/photo-1618453292459-53696dd3a5ff?w=500&q=80" },
-  { id: 7, name: "Denim Overshirt", fit: "Relaxed Fit", material: "Denim", price: 64.99, was: 84.99, rating: 4.8, colors: ["#3b5a7a"], extra: 0, img: "https://images.unsplash.com/photo-1589992896736-59a6f89e5f52?w=500&q=80" },
-  { id: 8, name: "Burgundy Formal Shirt", fit: "Slim Fit", material: "Cotton", price: 47.99, was: 0, rating: 4.1, colors: ["#7a2020", "#1c2b4a"], extra: 1, img: "https://images.unsplash.com/photo-1626497764746-6dc36546b388?w=500&q=80" },
+export const TRENDING = [
+  "Linen shirts",
+  "Slim fit",
+  "Under ₦15,000",
+  "New arrivals",
 ];
- 
-export const CATBRAND = "#fc0056"; 
+
+export const FILTERS = {
+  Price: [
+    "Under ₦10,000",
+    "₦10,000 – ₦20,000",
+    "₦20,000 – ₦35,000",
+    "Above ₦35,000",
+  ],
+  Brand: ["Amaget Essentials", "Ferro", "Northline", "Coast & Co."],
+};
+
+export const COLORS = [
+  "#1c2b4a",
+  "#3a5f3a",
+  "#ffffff",
+  "#111111",
+  "#8a6d3b",
+  "#c0392b",
+];
+
+export const CATPRODUCTS = [
+  {
+    id: 1,
+    name: "Sky Blue Formal Shirt",
+    fit: "Slim Fit",
+    material: "Cotton",
+    price: 49.99,
+    was: 69.99,
+    rating: 4.6,
+    colors: ["#7ea8c9", "#1c2b4a", "#c9c9c9"],
+    extra: 2,
+    img: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&q=80",
+  },
+  {
+    id: 2,
+    name: "Olive Green Shirt",
+    fit: "Slim Fit",
+    material: "Cotton",
+    price: 44.99,
+    was: 64.99,
+    rating: 4.5,
+    colors: ["#3a5f3a", "#c9c9c9"],
+    extra: 3,
+    img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&q=80",
+  },
+  {
+    id: 3,
+    name: "White Printed Shirt",
+    fit: "Regular Fit",
+    material: "Cotton",
+    price: 39.99,
+    was: 54.99,
+    rating: 4.4,
+    colors: ["#ffffff", "#1c2b4a"],
+    extra: 0,
+    img: "https://images.unsplash.com/photo-1620012253295-c15cc3e65df4?w=500&q=80",
+  },
+  {
+    id: 4,
+    name: "Navy Check Shirt",
+    fit: "Slim Fit",
+    material: "Cotton",
+    price: 54.99,
+    was: 79.99,
+    rating: 4.7,
+    colors: ["#1c2b4a", "#111111"],
+    extra: 1,
+    img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&q=80",
+  },
+  {
+    id: 5,
+    name: "Charcoal Linen Shirt",
+    fit: "Relaxed Fit",
+    material: "Linen",
+    price: 59.99,
+    was: 0,
+    rating: 4.3,
+    colors: ["#3a3a3a"],
+    extra: 0,
+    img: "https://images.unsplash.com/photo-1620327438706-fd979e39c1a9?w=500&q=80",
+  },
+  {
+    id: 6,
+    name: "Mustard Casual Shirt",
+    fit: "Regular Fit",
+    material: "Cotton",
+    price: 34.99,
+    was: 44.99,
+    rating: 4.2,
+    colors: ["#c9a24b", "#111111"],
+    extra: 2,
+    img: "https://images.unsplash.com/photo-1618453292459-53696dd3a5ff?w=500&q=80",
+  },
+  {
+    id: 7,
+    name: "Denim Overshirt",
+    fit: "Relaxed Fit",
+    material: "Denim",
+    price: 64.99,
+    was: 84.99,
+    rating: 4.8,
+    colors: ["#3b5a7a"],
+    extra: 0,
+    img: "https://images.unsplash.com/photo-1589992896736-59a6f89e5f52?w=500&q=80",
+  },
+  {
+    id: 8,
+    name: "Burgundy Formal Shirt",
+    fit: "Slim Fit",
+    material: "Cotton",
+    price: 47.99,
+    was: 0,
+    rating: 4.1,
+    colors: ["#7a2020", "#1c2b4a"],
+    extra: 1,
+    img: "https://images.unsplash.com/photo-1626497764746-6dc36546b388?w=500&q=80",
+  },
+];
+
+export const CATBRAND = "#fc0056";
 
 export const urlHome = process.env.NEXT_PUBLIC_BASEURL;

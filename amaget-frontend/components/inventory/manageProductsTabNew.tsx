@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import Icon from "./icons";
 import ProductThumb from "./ProductThumb";
 import { statusMeta } from "./StatusBadge";
-import { controlClass, primaryButton, secondaryButton, textareaClass } from "./ui";
+import { controlClass, primaryButton, secondaryButton, textareaClass } from "./UiForInventory";
 import type { Product, StockStatus, StoreName } from "./mock";
 
 function Card({ title, children }: { title: string; children: ReactNode }) {

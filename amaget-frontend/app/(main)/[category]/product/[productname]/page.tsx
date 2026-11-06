@@ -44,6 +44,8 @@ type ProductData = {
   sellerName?: string;
   rating?: number | undefined;
   reviewCount: number;
+  currency: string;
+  originalPrice: number;
 };
 
 const featureHighlights = [

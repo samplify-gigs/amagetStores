@@ -2,7 +2,19 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-export function FilterGroup({ title, options, selected, onToggle }) {
+interface FilterGroupProps {
+  title: string;
+  options: string[];
+  selected: string[];
+  onToggle: (option: string) => void;
+}
+
+export function FilterGroup({
+  title,
+  options,
+  selected,
+  onToggle,
+}: FilterGroupProps) {
   const [open, setOpen] = useState(true);
   return (
     <div className="border-b border-gray-100 py-3.5">

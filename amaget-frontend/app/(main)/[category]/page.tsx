@@ -23,7 +23,7 @@ type CategProdProps = {
   legacy_product_id: string;
   name: string;
   slug: string;
-  price: string;
+  price: number;
   total_count: string;
   url: string;
 };
@@ -157,7 +157,6 @@ export default function CategoryPage() {
                 </h2>
                 {activeFilterCount > 0 && (
                   <button
-                    onClick={resetFilters}
                     className="text-[11px] font-medium"
                     style={{ color: BRAND }}
                   >
@@ -165,15 +164,12 @@ export default function CategoryPage() {
                   </button>
                 )}
               </div>
-              {Object.entries(FILTERS).map(([group, options]) => (
-                <FilterGroup
-                  key={group}
-                  title={group}
-                  options={options}
-                  selected={selected[group] || []}
-                  onToggle={(opt) => toggleFilter(group, opt)}
-                />
+              {/**
+               * 
+               *  {Object.entries(FILTERS).map(([group, options]) => (
+                <FilterGroup key={group} title={group} options={options} />
               ))}
+               */}
             </div>
           </div>
         </aside>
@@ -189,7 +185,7 @@ export default function CategoryPage() {
               </div>
             </>
           ) : categProducts?.length === 0 ? (
-            <EmptyState />
+            <p>empty items</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 lg:gap-3 xl:gap-4">
               {categProducts?.map((p) => (

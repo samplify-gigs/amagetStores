@@ -37,8 +37,13 @@ interface Area {
 }
 
 // Labels / icons / ETAs live in the mock file; only the FEE comes from the backend.
-type DeliveryOption = (typeof fastDeliveryOptions)[number];
-const deliveryMeta: Record<string, DeliveryOption> = Object.fromEntries(
+type DeliveryMeta =
+  | (typeof fastDeliveryOptions)[number]
+  | (typeof standardDeliveryOptions)[number];
+
+type DeliveryOption = DeliveryMeta & { fee: number };
+
+const deliveryMeta: Record<string, DeliveryMeta> = Object.fromEntries(
   [...fastDeliveryOptions, ...standardDeliveryOptions].map((o) => [o.id, o]),
 );
 
