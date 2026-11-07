@@ -4,6 +4,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
+import { JwtAuthGuard } from '../AuthGuards/authgard';
+import { EmailModule } from 'src/email/email.module';
 
 @Module({
   imports: [
@@ -14,8 +16,10 @@ import { UsersModule } from '../users/users.module';
         expiresIn: '15m',
       },
     }),
+    EmailModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtAuthGuard],
+  exports: [JwtAuthGuard],
 })
 export class AuthModule {}

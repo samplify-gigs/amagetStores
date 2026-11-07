@@ -8,6 +8,12 @@ import {
   loginSchema,
   type RegisterDto,
   type LoginDto,
+  googleLoginSchema,
+  type GoogleLoginDto,
+  resetPasswordSchema,
+  type ResetPasswordDto,
+  forgotPasswordSchema,
+  type ForgotPasswordDto,
 } from '../../zod/zod.auth';
 
 import { ZodValidationPipe } from '../../zod/zod.validation';
@@ -57,4 +63,43 @@ export class AuthController {
       user: result.user,
     };
   }
+
+  //google direct login
+  @Post('google')
+  async googleLogin(
+    @Body(new ZodValidationPipe(googleLoginSchema))
+    body: GoogleLoginDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.authService.googleLogin(body);
+
+    response.cookie('access_token', result.access_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 15 * 60 * 1000,
+    });
+
+    return {
+      message: 'Google authentication successful',
+      user: result.user,
+    };
+  }
+
+
+  @Post('forgot-password')
+async forgotPassword(
+  @Body(new ZodValidationPipe(forgotPasswordSchema))
+  body: ForgotPasswordDto,
+) {
+  return this.authService.forgotPassword(body.email);
+}
+
+@Post('reset-password')
+async resetPassword(
+  @Body(new ZodValidationPipe(resetPasswordSchema))
+  body: ResetPasswordDto,
+) {
+  return this.authService.resetPassword(body);
+}
 }

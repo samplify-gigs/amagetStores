@@ -121,6 +121,159 @@ export class UsersRepository {
     return result.rowCount !== null && result.rowCount > 0;
   }
 
+  //reset password
+
+  async createPasswordResetToken(
+    userId: string,
+    tokenHash: string,
+    expiresAt: Date,
+  ) {
+    await this.db.query(
+      `INSERT INTO password_reset_tokens
+      (user_id, token_hash, expires_at)
+     VALUES ($1, $2, $3)`,
+      [userId, tokenHash, expiresAt],
+    );
+  }
+
+  async resetPassword(tokenHash: string, passwordHash: string) {
+  const client = await this.db.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    const tokenResult = await client.query(
+      `SELECT user_id
+       FROM password_reset_tokens
+       WHERE token_hash = $1
+         AND expires_at > NOW()
+         AND used_at IS NULL
+       FOR UPDATE`,
+      [tokenHash],
+    );
+
+    const token = tokenResult.rows[0];
+
+    if (!token) {
+      await client.query('ROLLBACK');
+      return false;
+    }
+
+    const updateResult = await client.query(
+      `UPDATE new_users
+       SET password = $1
+       WHERE id = $2
+         AND password IS NOT NULL`,
+      [passwordHash, token.user_id],
+    );
+
+    if (updateResult.rowCount !== 1) {
+      await client.query('ROLLBACK');
+      return false;
+    }
+
+    await client.query(
+      `UPDATE password_reset_tokens
+       SET used_at = NOW()
+       WHERE token_hash = $1`,
+      [tokenHash],
+    );
+
+    await client.query('COMMIT');
+
+    return true;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async invalidatePasswordResetTokens(userId: string) {
+  await this.db.query(
+    `UPDATE password_reset_tokens
+     SET used_at = NOW()
+     WHERE user_id = $1
+       AND used_at IS NULL`,
+    [userId],
+  );
+}
+
+  // find google user
+
+  async findGoogleUser(googleId: string): Promise<User | null> {
+    const result = await this.db.query<UserRow>(
+      `SELECT u.id, u.first_name, u.last_name, u.email,
+            u.email_verified, u.roles
+     FROM new_users u
+     INNER JOIN user_identities ui ON ui.user_id = u.id
+     WHERE ui.provider = $1
+     AND ui.provider_user_id = $2`,
+      ['google', googleId],
+    );
+
+    const row = result.rows[0];
+
+    if (!row) return null;
+
+    return {
+      id: row.id,
+      first_name: row.first_name,
+      last_name: row.last_name,
+      email: row.email,
+      email_verified: row.email_verified,
+      roles: [row.roles],
+    };
+  }
+
+  // create google user
+  async createGoogleUser(
+    first_name: string,
+    last_name: string,
+    email: string,
+    googleId: string,
+  ): Promise<User> {
+    const client = await this.db.connect();
+
+    try {
+      await client.query('BEGIN');
+
+      const userResult = await client.query<UserRow>(
+        `INSERT INTO new_users
+        (first_name, last_name, email, password, email_verified)
+       VALUES ($1, $2, $3, NULL, TRUE)
+       RETURNING id, first_name, last_name, email, email_verified, roles`,
+        [first_name, last_name, email],
+      );
+
+      const user = userResult.rows[0];
+
+      await client.query(
+        `INSERT INTO user_identities
+        (user_id, provider, provider_user_id)
+       VALUES ($1, $2, $3)`,
+        [user.id, 'google', googleId],
+      );
+
+      await client.query('COMMIT');
+
+      return {
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        email_verified: user.email_verified,
+        roles: [user.roles],
+      };
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
   // CONVERT DATABASE ROW TO USER
   private toUser(row: UserRow): User {
     return {
