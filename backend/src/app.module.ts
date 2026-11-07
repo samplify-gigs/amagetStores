@@ -9,6 +9,7 @@ import { NodeCronModule } from './node_cron/node_cron.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ProductsModule } from './products/products.module';
 import { OrdersDeliveryModule } from './orders-delivery/orders-delivery.module';
+import { AuthModule } from './auth/auth-logic/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { OrdersDeliveryModule } from './orders-delivery/orders-delivery.module';
     NodeCronModule,
     ProductsModule,
     OrdersDeliveryModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
