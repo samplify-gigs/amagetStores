@@ -15,6 +15,30 @@ export class EmailService {
     this.resend = new Resend(apiKey);
   }
 
+  //sign up welcome and verify email
+
+  async welcomeUserEmail(to: string, verifyUrl: string) {
+    const { error } = await this.resend.emails.send({
+      from: process.env.EMAIL_FROM!,
+      to: 'samplifygigs@gmail.com',
+      subject: 'Welcome to amaget',
+      html: `
+        <h2>Kindly verify your account</h2>
+        <p>We are glad to have you here at amaget</p>
+        <p>Click the link below to verify your account:</p>
+        <a href="${verifyUrl}">verify</a>
+        <p>This link expires in 15 minutes.</p>
+        <p>If you didn't request this, you can ignore this email.</p>
+      `,
+    });
+
+    if (error) {
+      console.error('resend error:', error);
+      throw new Error(error.message);
+    }
+  }
+
+  //password reset email
   async sendPasswordResetEmail(to: string, resetUrl: string) {
     const { error } = await this.resend.emails.send({
       from: process.env.EMAIL_FROM!,

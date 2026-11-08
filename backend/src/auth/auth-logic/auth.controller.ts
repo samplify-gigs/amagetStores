@@ -14,6 +14,10 @@ import {
   type ResetPasswordDto,
   forgotPasswordSchema,
   type ForgotPasswordDto,
+  type VerifyEmailDto,
+  verifyEmailSchema,
+  type ResendVerificationDto,
+  resendVerificationSchema,
 } from '../../zod/zod.auth';
 
 import { ZodValidationPipe } from '../../zod/zod.validation';
@@ -26,16 +30,8 @@ export class AuthController {
   async register(
     @Body(new ZodValidationPipe(registerSchema))
     body: RegisterDto,
-    @Res({ passthrough: true }) response: Response,
   ) {
     const result = await this.authService.register(body);
-
-    response.cookie('access_token', result.access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000,
-    });
 
     return {
       message: 'Registration successful',
@@ -64,6 +60,25 @@ export class AuthController {
     };
   }
 
+  //verify email for new users
+
+  @Post('verify-email')
+  async verifyEmail(
+    @Body(new ZodValidationPipe(verifyEmailSchema))
+    body: VerifyEmailDto,
+  ) {
+    return this.authService.verifyEmail(body.token);
+  }
+
+  //resend verifcation link
+
+  @Post('resend-verification')
+  async resendVerification(
+    @Body(new ZodValidationPipe(resendVerificationSchema))
+    body: ResendVerificationDto,
+  ) {
+    return this.authService.resendVerification(body.email);
+  }
   //google direct login
   @Post('google')
   async googleLogin(
@@ -86,20 +101,19 @@ export class AuthController {
     };
   }
 
-
   @Post('forgot-password')
-async forgotPassword(
-  @Body(new ZodValidationPipe(forgotPasswordSchema))
-  body: ForgotPasswordDto,
-) {
-  return this.authService.forgotPassword(body.email);
-}
+  async forgotPassword(
+    @Body(new ZodValidationPipe(forgotPasswordSchema))
+    body: ForgotPasswordDto,
+  ) {
+    return this.authService.forgotPassword(body.email);
+  }
 
-@Post('reset-password')
-async resetPassword(
-  @Body(new ZodValidationPipe(resetPasswordSchema))
-  body: ResetPasswordDto,
-) {
-  return this.authService.resetPassword(body);
-}
+  @Post('reset-password')
+  async resetPassword(
+    @Body(new ZodValidationPipe(resetPasswordSchema))
+    body: ResetPasswordDto,
+  ) {
+    return this.authService.resetPassword(body);
+  }
 }

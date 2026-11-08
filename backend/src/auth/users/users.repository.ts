@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Role, User } from './users';
 import { Pool } from 'pg';
 
@@ -9,7 +9,16 @@ interface UserRow {
   email: string;
   email_verified: boolean;
   roles: Role;
-  password: string | null;
+  password_hash: string | null;
+}
+
+interface UserReturnRow {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  email_verified: boolean;
+  role: Role;
 }
 
 @Injectable()
@@ -18,37 +27,94 @@ export class UsersRepository {
 
   // CREATE USER
   async createUser(
-    first_name: string,
-    last_name: string,
-    email: string,
-    password: string | null,
-  ): Promise<User> {
-    const result = await this.db.query<UserRow>(
+  first_name: string,
+  last_name: string,
+  email: string,
+  password_hash: string,
+  verify_token_hash: string,
+  verify_token_expires_at: Date,
+) {
+  try {
+    const result = await this.db.query<UserReturnRow>(
       `INSERT INTO new_users (
         first_name,
         last_name,
         email,
-        password
+        password_hash,
+        verify_token_hash,
+        verify_token_expires_at
       )
-      VALUES ($1, $2, $3, $4)
-      RETURNING id, first_name, last_name, email, email_verified, roles`,
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING id, first_name, last_name, email, email_verified, role`,
       [
         first_name,
         last_name,
-        email.trim().normalize('NFC').toLowerCase(),
-        password,
+        email,
+        password_hash,
+        verify_token_hash,
+        verify_token_expires_at,
       ],
     );
 
-    const row = result.rows[0];
+    const user = result.rows[0];
 
-    if (result.rowCount === 0) {
-      throw new Error('User could not be created');
+    return {
+      id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      email_verified: user.email_verified,
+      role: user.role,
+    };
+  } catch (error: any) {
+    // 23505 = duplicate email (unique constraint)
+    if (error.code === '23505') {
+      throw new ConflictException('Email already exists');
     }
 
-    return this.toUser(row);
+    throw new InternalServerErrorException('Failed to create user');
+  }
+}
+
+  
+
+  // verify new user email
+  async verifyEmail(tokenHash: string): Promise<boolean> {
+    const result = await this.db.query(
+      `UPDATE new_users
+     SET email_verified = TRUE,
+         verify_token_hash = NULL,
+         verify_token_expires_at = NULL,
+         updated_at = NOW()
+     WHERE verify_token_hash = $1
+       AND verify_token_expires_at > NOW()
+       AND email_verified = FALSE`,
+      [tokenHash],
+    );
+
+    return result.rowCount === 1;
   }
 
+  // update verification token new user
+
+  async updateVerificationToken(
+    email: string,
+    tokenHash: string,
+    expiresAt: Date,
+  ) {
+    const result = await this.db.query(
+      `UPDATE new_users
+     SET verify_token_hash = $1,
+         verify_token_expires_at = $2,
+         updated_at = NOW()
+     WHERE email = $3
+       AND email_verified = FALSE
+     RETURNING email`,
+      [tokenHash, expiresAt, email],
+    );
+
+    return result.rows[0] ?? null;
+  }
   // FIND USER BY ID
   async findById(id: string): Promise<User | null> {
     const result = await this.db.query<UserRow>(
@@ -70,7 +136,7 @@ export class UsersRepository {
   // FIND USER BY EMAIL
   async findByEmail(email: string): Promise<User | null> {
     const result = await this.db.query<UserRow>(
-      `SELECT id, first_name, last_name, email, email_verified, roles
+      `SELECT id, first_name, last_name, email, email_verified, role
        FROM new_users
        WHERE email = $1`,
       [email.trim().normalize('NFC').toLowerCase()],
@@ -88,9 +154,10 @@ export class UsersRepository {
   // FIND USER CREDENTIALS FOR SIGN IN
   async findCredentials(email: string): Promise<UserRow | null> {
     const result = await this.db.query<UserRow>(
-      `SELECT id, first_name, last_name, email, email_verified, roles, password
-       FROM new_users
-       WHERE email = $1`,
+      `SELECT id, first_name, last_name, email,
+       email_verified, role, password_hash
+        FROM new_users
+        WHERE email = $1`,
       [email.trim().normalize('NFC').toLowerCase()],
     );
 
@@ -137,68 +204,68 @@ export class UsersRepository {
   }
 
   async resetPassword(tokenHash: string, passwordHash: string) {
-  const client = await this.db.connect();
+    const client = await this.db.connect();
 
-  try {
-    await client.query('BEGIN');
+    try {
+      await client.query('BEGIN');
 
-    const tokenResult = await client.query(
-      `SELECT user_id
+      const tokenResult = await client.query(
+        `SELECT user_id
        FROM password_reset_tokens
        WHERE token_hash = $1
          AND expires_at > NOW()
          AND used_at IS NULL
        FOR UPDATE`,
-      [tokenHash],
-    );
+        [tokenHash],
+      );
 
-    const token = tokenResult.rows[0];
+      const token = tokenResult.rows[0];
 
-    if (!token) {
-      await client.query('ROLLBACK');
-      return false;
-    }
+      if (!token) {
+        await client.query('ROLLBACK');
+        return false;
+      }
 
-    const updateResult = await client.query(
-      `UPDATE new_users
+      const updateResult = await client.query(
+        `UPDATE new_users
        SET password = $1
        WHERE id = $2
          AND password IS NOT NULL`,
-      [passwordHash, token.user_id],
-    );
+        [passwordHash, token.user_id],
+      );
 
-    if (updateResult.rowCount !== 1) {
-      await client.query('ROLLBACK');
-      return false;
-    }
+      if (updateResult.rowCount !== 1) {
+        await client.query('ROLLBACK');
+        return false;
+      }
 
-    await client.query(
-      `UPDATE password_reset_tokens
+      await client.query(
+        `UPDATE password_reset_tokens
        SET used_at = NOW()
        WHERE token_hash = $1`,
-      [tokenHash],
-    );
+        [tokenHash],
+      );
 
-    await client.query('COMMIT');
+      await client.query('COMMIT');
 
-    return true;
-  } catch (error) {
-    await client.query('ROLLBACK');
-    throw error;
-  } finally {
-    client.release();
+      return true;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
   }
-}
 
-async invalidatePasswordResetTokens(userId: string) {
-  await this.db.query(
-    `UPDATE password_reset_tokens
+  async invalidatePasswordResetTokens(userId: string) {
+    await this.db.query(
+      `UPDATE password_reset_tokens
      SET used_at = NOW()
      WHERE user_id = $1
        AND used_at IS NULL`,
-    [userId],
-  );
-}
+      [userId],
+    );
+  }
 
   // find google user
 

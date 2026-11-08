@@ -7,7 +7,13 @@ type TextFieldProps = Omit<ComponentProps<"input">, "id"> & {
   trailing?: ReactNode;
 };
 
-export default function TextField({ label, name, trailing, className = "", ...props }: TextFieldProps) {
+export default function TextField({
+  label,
+  name,
+  trailing,
+  className = "",
+  ...props
+}: TextFieldProps) {
   return (
     <div>
       <label htmlFor={name} className="mb-2 block text-sm font-medium">
@@ -21,8 +27,13 @@ export default function TextField({ label, name, trailing, className = "", ...pr
           className={`h-12 w-full rounded-xl  bg-background px-4 text-base text-foreground outline-hidden transition placeholder:text-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/20 ${
             trailing ? "pr-12" : ""
           } ${className}`}
+          
         />
-        {trailing && <div className="absolute inset-y-0 right-1 flex items-center">{trailing}</div>}
+        {trailing && (
+          <div className="absolute inset-y-0 right-1 flex items-center">
+            {trailing}
+          </div>
+        )}
       </div>
     </div>
   );
