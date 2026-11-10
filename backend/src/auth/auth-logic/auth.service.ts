@@ -130,6 +130,7 @@ export class AuthService {
   // verify email
 
   async verifyEmail(token: string) {
+    console.log('verify email');
     const tokenHash = createHash('sha256').update(token).digest('hex');
 
     const verified = await this.usersRepository.verifyEmail(tokenHash);

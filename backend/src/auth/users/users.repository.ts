@@ -1,4 +1,9 @@
-import { ConflictException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Role, User } from './users';
 import { Pool } from 'pg';
 
@@ -21,22 +26,26 @@ interface UserReturnRow {
   role: Role;
 }
 
+interface EmailResend {
+  email: string;
+}
+
 @Injectable()
 export class UsersRepository {
   constructor(@Inject('PG_POOL') private readonly db: Pool) {}
 
   // CREATE USER
   async createUser(
-  first_name: string,
-  last_name: string,
-  email: string,
-  password_hash: string,
-  verify_token_hash: string,
-  verify_token_expires_at: Date,
-) {
-  try {
-    const result = await this.db.query<UserReturnRow>(
-      `INSERT INTO new_users (
+    first_name: string,
+    last_name: string,
+    email: string,
+    password_hash: string,
+    verify_token_hash: string,
+    verify_token_expires_at: Date,
+  ) {
+    try {
+      const result = await this.db.query<UserReturnRow>(
+        `INSERT INTO new_users (
         first_name,
         last_name,
         email,
@@ -46,37 +55,35 @@ export class UsersRepository {
       )
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING id, first_name, last_name, email, email_verified, role`,
-      [
-        first_name,
-        last_name,
-        email,
-        password_hash,
-        verify_token_hash,
-        verify_token_expires_at,
-      ],
-    );
+        [
+          first_name,
+          last_name,
+          email,
+          password_hash,
+          verify_token_hash,
+          verify_token_expires_at,
+        ],
+      );
 
-    const user = result.rows[0];
+      const user = result.rows[0];
 
-    return {
-      id: user.id,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-      email_verified: user.email_verified,
-      role: user.role,
-    };
-  } catch (error: any) {
-    // 23505 = duplicate email (unique constraint)
-    if (error.code === '23505') {
-      throw new ConflictException('Email already exists');
+      return {
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        email_verified: user.email_verified,
+        role: user.role,
+      };
+    } catch (error: any) {
+      // 23505 = duplicate email (unique constraint)
+      if (error.code === '23505') {
+        throw new ConflictException('Email already exists');
+      }
+
+      throw new InternalServerErrorException('Failed to create user');
     }
-
-    throw new InternalServerErrorException('Failed to create user');
   }
-}
-
-  
 
   // verify new user email
   async verifyEmail(tokenHash: string): Promise<boolean> {
@@ -102,7 +109,7 @@ export class UsersRepository {
     tokenHash: string,
     expiresAt: Date,
   ) {
-    const result = await this.db.query(
+    const result = await this.db.query<EmailResend>(
       `UPDATE new_users
      SET verify_token_hash = $1,
          verify_token_expires_at = $2,
