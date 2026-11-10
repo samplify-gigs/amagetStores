@@ -81,12 +81,14 @@ export class AuthService {
 
   async login(dto: LoginDto) {
     // 1. Find user
+    console.log('hey login');
     const user = await this.usersRepository.findCredentials(dto.email);
 
     if (!user || !user.password_hash) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
+    console.log('hey login2');
     // 2. Compare passwords
     const passwordMatch = await bcrypt.compare(
       dto.password,
@@ -109,6 +111,8 @@ export class AuthService {
       sub: user.id,
       email: user.email,
     });
+
+    console.log('cookies token:', access_token);
 
     return {
       user: {
